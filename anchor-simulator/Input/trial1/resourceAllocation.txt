@@ -1,0 +1,17 @@
+satellite
+gNB gNBIndex NumberAttachedUEPerTrafficProfile
+0 1
+1 1
+
+terrestrial
+gNB gNBIndex NumberAttachedUEPerTrafficProfile
+0 1
+1 1
+
+satellite
+UE UEIndex UETrafficProfile gNBIndexToAttach
+0 0 0 
+
+terrestrial
+UE UEIndex UETrafficProfile gNBIndexToAttach
+0 0 0 

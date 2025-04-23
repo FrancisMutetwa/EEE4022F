@@ -1,0 +1,14 @@
+numgNBs 2
+numTerrestrialGNBs 2
+numTrafficProfiles 1
+numUEsPerTrafProf 1
+numActiveFrequencyBands 1
+centralFrequencyBands 28100000000
+bandwidthBands 200000000
+numCCsPerBand 1
+centralFrequencyCCs 28100000000
+bandwidthCCs 200000000
+numBWPsPerCC 1
+centralFrequencyBWPs 28100000000
+bandwidthBWPs 200000000
+numerologyBWPs 0

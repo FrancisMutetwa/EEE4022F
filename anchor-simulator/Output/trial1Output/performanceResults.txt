@@ -1,0 +1,27 @@
+Satellite Network Metrics:
+Average delivery time per traffic flow [ms]
+
+Average delivery time [ms]
+-nan
+Jitter per traffic flow [ms]
+
+Average jitter [ms]
+-nan
+Aggregated throughput per satellite channel [Mbps]
+0.000000 0.000000 
+Average aggregated throughput [Mbps]
+0.000000
+
+Terrestrial Network Metrics:
+Average delivery time per traffic flow [ms]
+
+Average delivery time [ms]
+-nan
+Jitter per traffic flow [ms]
+
+Average jitter [ms]
+-nan
+Aggregated throughput per terrestrial channel [Mbps]
+0.000000 0.000000 
+Average aggregated throughput [Mbps]
+0.000000

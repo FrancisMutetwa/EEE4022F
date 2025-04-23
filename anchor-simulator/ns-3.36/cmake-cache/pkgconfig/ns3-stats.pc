@@ -1,0 +1,13 @@
+exec_prefix="/usr/local/bin"
+libdir="/usr/local/lib"
+includedir="/usr/local/include"
+
+Name: ns3-stats
+Description: 
+URL: 
+Version: 3.36
+Requires:  ns3-core
+Requires.private: 
+Cflags: -I"${includedir}"  -I/usr/include -I/usr/include -I/usr
+Libs: -L"${libdir}" -lns3.36-stats-default  -lns3.36-core-default -l/usr/lib/x86_64-linux-gnu/libsqlite3.so
+Libs.private: -L"${libdir}" 

@@ -1,0 +1,2 @@
+TFIndex packetSize[bit] packetInterGenerationTime[ms]
+0 1000 1000

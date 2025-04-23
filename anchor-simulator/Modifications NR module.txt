@@ -1,0 +1,730 @@
+diff -r nr/CMakeLists.txt nr-master/CMakeLists.txt
+93,96d92
+<     model/node-mobility.cc
+<     model/sgp4ext.cpp
+<     model/sgp4io.cpp
+<     model/sgp4unit.cpp
+201,204d196
+<     model/node-mobility.h
+<     model/sgp4ext.h
+<     model/sgp4io.h
+<     model/sgp4unit.h
+248c240
+< )
+---
+> )
+\ No newline at end of file
+diff -r nr/examples/CMakeLists.txt nr-master/examples/CMakeLists.txt
+20d19
+<     ran-simulator
+70c69
+< )
+---
+> )
+\ No newline at end of file
+Only in nr/examples: ran-simulator.cc
+diff -r nr/helper/beamforming-helper-base.h nr-master/helper/beamforming-helper-base.h
+71,82d70
+<   /** MODIFICATION: Added function
+<    * \brief Creates a new beamforming task, which means the pair of
+<    * devices for which the configured algorithm for updating the
+<    * beamforming vectors will be run either periodically or
+<    * as specified by the algorithm.
+<    * \param gNbDev gNb device
+<    * \param ueDev UE device
+<    */
+<   virtual void AddBeamformingTask (const Ptr<NrGnbNetDevice>& gNbDev,
+<                                    const Ptr<NrUeNetDevice>& ueDev,
+< 								   const uint8_t iTarget) = 0;
+< 
+diff -r nr/helper/ideal-beamforming-helper.cc nr-master/helper/ideal-beamforming-helper.cc
+110,139d109
+< // MODIFICATION: Added function
+< void
+< IdealBeamformingHelper::AddBeamformingTask (const Ptr<NrGnbNetDevice>& gnbDev,
+<                                             const Ptr<NrUeNetDevice>& ueDev,
+< 											const uint8_t iTarget)
+< {
+<   NS_LOG_FUNCTION (this);
+< 
+<   if (!m_beamformingAlgorithm)
+<     {
+<       m_beamformingAlgorithm = m_algorithmFactory.Create<IdealBeamformingAlgorithm> ();
+<     }
+< 
+<   uint8_t gnbAntennaArrays = gnbDev->GetPhy (iTarget)->GetNumberOfStreams ();
+<   uint8_t ueAntennaArrays = ueDev->GetPhy (iTarget)->GetNumberOfStreams ();
+<   uint8_t arrays = std::min (gnbAntennaArrays, ueAntennaArrays);
+<   NS_ASSERT (arrays);
+<   //TODO add assert to check if they are of the same polarization
+<   for (uint8_t arrayIndex = 0; arrayIndex < arrays; arrayIndex++)
+< 	{
+< 	  Ptr<NrSpectrumPhy> gnbSpectrumPhy = gnbDev->GetPhy (iTarget)->GetSpectrumPhy (arrayIndex);
+< 	  Ptr<NrSpectrumPhy> ueSpectrumPhy = ueDev->GetPhy (iTarget)->GetSpectrumPhy (arrayIndex);
+< 
+< 	  m_spectrumPhyPairToDevicePair [std::make_pair (gnbSpectrumPhy, ueSpectrumPhy)] = std::make_pair (gnbDev, ueDev);
+< 
+< 	  RunTask (gnbDev, ueDev, gnbSpectrumPhy, ueSpectrumPhy);
+< 	}
+< 
+< }
+< 
+147c117
+<   for (const auto& task : m_spectrumPhyPairToDevicePair)	//MODIFICATION: possible problems....
+---
+>   for (const auto& task : m_spectrumPhyPairToDevicePair)
+diff -r nr/helper/ideal-beamforming-helper.h nr-master/helper/ideal-beamforming-helper.h
+87,97d86
+<   /** MODIFICATION: Added function
+<    * \brief Specify among which devices the beamforming algorithm should be
+<    * performed
+<    * \param gNbDev gNB device
+<    * \param ueDev UE device
+<    * \param iTarget
+<    */
+<   void AddBeamformingTask (const Ptr<NrGnbNetDevice>& gNbDev,
+<                            const Ptr<NrUeNetDevice>& ueDev,
+< 						   const uint8_t iTarget) override;
+< 
+diff -r nr/helper/nr-helper.cc nr-master/helper/nr-helper.cc
+476,495d475
+< //MODIFICATION: Added this function
+< NetDeviceContainer
+< NrHelper::InstallUeDevice (const NodeContainer &c,
+<                                const std::vector<std::reference_wrapper<BandwidthPartInfoPtr> > &allBwps,
+< 							   const std::vector<uint32_t> bwpIDs,
+< 							   uint8_t numberOfStreams)
+< {
+<   NS_LOG_FUNCTION (this);
+<   Initialize ();    // Run DoInitialize (), if necessary
+<   NetDeviceContainer devices;
+<   for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
+<     {
+<       Ptr<Node> node = *i;
+<       Ptr<NetDevice> device = InstallSingleUeDevice (node, allBwps, bwpIDs, numberOfStreams);
+<       device->SetAddress (Mac48Address::Allocate ());
+<       devices.Add (device);
+<     }
+<   return devices;
+< }
+< 
+514,543d493
+< //MODIFICATION: Added this function
+< NetDeviceContainer
+< NrHelper::InstallGnbDevice (const NodeContainer & c,
+<                                 const std::vector<std::reference_wrapper<BandwidthPartInfoPtr> > allBwps,
+< 								const std::vector<uint32_t> bwpIDs,
+< 								uint8_t numberOfStreams)
+< {
+< 	if (allBwps.size () != 0)	// needed to not activate gNBs with no UEs attached
+< 	  {
+< 		  NS_LOG_FUNCTION (this);
+< 		  Initialize ();    // Run DoInitialize (), if necessary
+< 		  NetDeviceContainer devices;
+< 		  for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
+< 			{
+< 			  Ptr<Node> node = *i;
+< 			  Ptr<NetDevice> device = InstallSingleGnbDevice (node, allBwps, bwpIDs, numberOfStreams);
+< 			  device->SetAddress (Mac48Address::Allocate ());
+< 			  devices.Add (device);
+< 			}
+< 		  return devices;
+< 	  }
+< 	else
+< 	  {
+< 		Ptr<NetDevice> device = NULL;
+< 		NetDeviceContainer devices;
+< 		devices.Add(device);
+< 		return devices;
+< 	  }
+< }
+< 
+763,905d712
+< //MODIFICATION: Added this function
+< Ptr<NetDevice>
+< NrHelper::InstallSingleUeDevice (const Ptr<Node> &n,
+<                                      const std::vector<std::reference_wrapper<BandwidthPartInfoPtr> > allBwps,
+< 									 const std::vector<uint32_t> bwpIDs,
+< 									 uint8_t numberOfStreams)
+< {
+<   NS_LOG_FUNCTION (this);
+< 
+<   Ptr<NrUeNetDevice> dev = m_ueNetDeviceFactory.Create<NrUeNetDevice> ();
+<   dev->SetNode (n);
+< 
+<   std::map<uint8_t, Ptr<BandwidthPartUe> > ueCcMap;
+< 
+<   // Create, for each ue, its bandwidth parts
+<   for (uint32_t bwpId = 0; bwpId < allBwps.size (); ++bwpId)
+<     {
+<       Ptr <BandwidthPartUe> cc =  CreateObject<BandwidthPartUe> ();
+<       double bwInKhz = allBwps[bwpId].get()->m_channelBandwidth / 1000.0;
+<       NS_ABORT_MSG_IF (bwInKhz/100.0 > 65535.0, "A bandwidth of " << bwInKhz/100.0 << " kHz cannot be represented");
+<       cc->SetUlBandwidth (static_cast<uint16_t> (bwInKhz / 100));
+<       cc->SetDlBandwidth (static_cast<uint16_t> (bwInKhz / 100));
+<       cc->SetDlEarfcn (0); // Used for nothing..
+<       cc->SetUlEarfcn (0); // Used for nothing..
+< 
+<       auto mac = CreateUeMac ();
+<       cc->SetMac (mac);
+< 
+<       auto phy = CreateUePhy (n, allBwps[bwpId].get(), dev, std::bind (&NrUeNetDevice::RouteIngoingCtrlMsgs, dev,
+<                                          std::placeholders::_1, bwpIDs[bwpId]), numberOfStreams);
+< 
+<       if (m_harqEnabled)
+<         {
+<           phy->SetPhyDlHarqFeedbackCallback (MakeCallback (&NrUeNetDevice::EnqueueDlHarqFeedback, dev));
+<         }
+< 
+<       phy->SetBwpId (bwpIDs[bwpId]);
+<       cc->SetPhy (phy);
+< 
+<       if (bwpId == 0)
+<         {
+<           cc->SetAsPrimary (true);
+<         }
+<       else
+<         {
+<           cc->SetAsPrimary (false);
+<         }
+< 
+<       ueCcMap.insert (std::make_pair (bwpIDs[bwpId], cc));
+<     }
+< 
+<   Ptr<LteUeComponentCarrierManager> ccmUe = DynamicCast<LteUeComponentCarrierManager> (CreateObject <BwpManagerUe> ());
+<   DynamicCast<BwpManagerUe> (ccmUe)->SetBwpManagerAlgorithm (m_ueBwpManagerAlgoFactory.Create <BwpManagerAlgorithm> ());
+< 
+<   Ptr<LteUeRrc> rrc = CreateObject<LteUeRrc> ();
+<   rrc->m_numberOfComponentCarriers = ueCcMap.size ();
+<   // run intializeSap to create the proper number of sap provider/users
+<   rrc->InitializeSap ();
+<   rrc->SetLteMacSapProvider (ccmUe->GetLteMacSapProvider ());
+<   // setting ComponentCarrierManager SAP
+<   rrc->SetLteCcmRrcSapProvider (ccmUe->GetLteCcmRrcSapProvider ());
+<   ccmUe->SetLteCcmRrcSapUser (rrc->GetLteCcmRrcSapUser ());
+<   ccmUe->SetNumberOfComponentCarriers (ueCcMap.size ());
+< 
+<   bool useIdealRrc = true;
+<   if (useIdealRrc)
+<     {
+<       Ptr<nrUeRrcProtocolIdeal> rrcProtocol = CreateObject<nrUeRrcProtocolIdeal> ();
+<       rrcProtocol->SetUeRrc (rrc);
+<       rrc->AggregateObject (rrcProtocol);
+<       rrcProtocol->SetLteUeRrcSapProvider (rrc->GetLteUeRrcSapProvider ());
+<       rrc->SetLteUeRrcSapUser (rrcProtocol->GetLteUeRrcSapUser ());
+<     }
+<   else
+<     {
+<       Ptr<LteUeRrcProtocolReal> rrcProtocol = CreateObject<LteUeRrcProtocolReal> ();
+<       rrcProtocol->SetUeRrc (rrc);
+<       rrc->AggregateObject (rrcProtocol);
+<       rrcProtocol->SetLteUeRrcSapProvider (rrc->GetLteUeRrcSapProvider ());
+<       rrc->SetLteUeRrcSapUser (rrcProtocol->GetLteUeRrcSapUser ());
+<     }
+< 
+<   if (m_epcHelper != nullptr)
+<     {
+<       rrc->SetUseRlcSm (false);
+<     }
+<   else
+<     {
+<       rrc->SetUseRlcSm (true);
+<     }
+<   Ptr<EpcUeNas> nas = CreateObject<EpcUeNas> ();
+< 
+<   nas->SetAsSapProvider (rrc->GetAsSapProvider ());
+<   nas->SetDevice (dev);
+<   nas->SetForwardUpCallback (MakeCallback (&NrUeNetDevice::Receive, dev));
+< 
+<   rrc->SetAsSapUser (nas->GetAsSapUser ());
+< 
+<   uint8_t pos = 0;
+<   for (auto it = ueCcMap.begin (); it != ueCcMap.end (); ++it)
+<     {
+<       rrc->SetLteUeCmacSapProvider (it->second->GetMac ()->GetUeCmacSapProvider (), pos);
+<       it->second->GetMac ()->SetUeCmacSapUser (rrc->GetLteUeCmacSapUser (pos));
+< 
+<       it->second->GetPhy ()->SetUeCphySapUser (rrc->GetLteUeCphySapUser ());
+<       rrc->SetLteUeCphySapProvider (it->second->GetPhy ()->GetUeCphySapProvider (), pos);
+< 
+<       it->second->GetPhy ()->SetPhySapUser (it->second->GetMac ()->GetPhySapUser ());
+<       it->second->GetMac ()->SetPhySapProvider (it->second->GetPhy ()->GetPhySapProvider ());
+< 
+<       bool ccmTest = ccmUe->SetComponentCarrierMacSapProviders (it->first,
+<                                                                 it->second->GetMac ()->GetUeMacSapProvider ());
+< 
+<       if (ccmTest == false)
+<         {
+<           NS_FATAL_ERROR ("Error in SetComponentCarrierMacSapProviders");
+<         }
+< 
+<       pos++;
+<     }
+< 
+<   NS_ABORT_MSG_IF (m_imsiCounter >= 0xFFFFFFFF, "max num UEs exceeded");
+<   uint64_t imsi = ++m_imsiCounter;
+< 
+<   dev->SetAttribute ("Imsi", UintegerValue (imsi));
+<   dev->SetCcMap (ueCcMap);
+<   dev->SetAttribute ("nrUeRrc", PointerValue (rrc));
+<   dev->SetAttribute ("EpcUeNas", PointerValue (nas));
+<   dev->SetAttribute ("LteUeComponentCarrierManager", PointerValue (ccmUe));
+< 
+<   n->AddDevice (dev);
+< 
+< 
+<   if (m_epcHelper != nullptr)
+<     {
+<       m_epcHelper->AddUe (dev, dev->GetImsi ());
+<     }
+< 
+<   dev->Initialize ();
+< 
+<   return dev;
+< }
+< 
+1173,1353d979
+< //MODIFICATION: Added this function
+< Ptr<NetDevice>
+< NrHelper::InstallSingleGnbDevice (const Ptr<Node> &n,
+<                                   const std::vector<std::reference_wrapper<BandwidthPartInfoPtr> > allBwps,
+< 								  const std::vector<uint32_t> bwpIDs,
+< 								  uint8_t numberOfStreams)
+< {
+<   NS_ABORT_MSG_IF (m_cellIdCounter == 65535, "max num gNBs exceeded");
+< 
+<   Ptr<NrGnbNetDevice> dev = m_gnbNetDeviceFactory.Create<NrGnbNetDevice> ();
+< 
+<   NS_LOG_DEBUG ("Creating gNB, cellId = " << m_cellIdCounter);
+<   uint16_t cellId = m_cellIdCounter++;
+< 
+<   dev->SetCellId (cellId);
+<   dev->SetNode (n);
+< 
+<   // create component carrier map for this gNB device
+<   std::map<uint8_t,Ptr<BandwidthPartGnb> > ccMap;
+< 
+<   for (uint32_t bwpId = 0; bwpId < allBwps.size (); ++bwpId)
+<     {
+<       NS_LOG_DEBUG ("Creating BandwidthPart, id = " << bwpId);
+<       Ptr <BandwidthPartGnb> cc =  CreateObject<BandwidthPartGnb> ();
+<       double bwInKhz = allBwps[bwpId].get()->m_channelBandwidth / 1000.0;
+<       NS_ABORT_MSG_IF (bwInKhz/100.0 > 65535.0, "A bandwidth of " << bwInKhz/100.0 << " kHz cannot be represented");
+< 
+<       cc->SetUlBandwidth (static_cast<uint16_t> (bwInKhz / 100));
+<       cc->SetDlBandwidth (static_cast<uint16_t> (bwInKhz / 100));
+<       cc->SetDlEarfcn (0); // Argh... handover not working
+<       cc->SetUlEarfcn (0); // Argh... handover not working
+<       cc->SetCellId (m_cellIdCounter++);
+< 
+<       auto phy = CreateGnbPhy (n, allBwps[bwpId].get(), dev,
+<                                std::bind (&NrGnbNetDevice::RouteIngoingCtrlMsgs,
+<                                           dev, std::placeholders::_1, bwpIDs[bwpId]), numberOfStreams);
+< 
+<       phy->SetBwpId (bwpIDs[bwpId]);
+<       cc->SetPhy (phy);
+< 
+<       auto mac = CreateGnbMac ();
+<       cc->SetMac (mac);
+<       phy->GetCam ()->SetNrGnbMac (mac);
+< 
+<       auto sched = CreateGnbSched ();
+<       cc->SetNrMacScheduler (sched);
+< 
+<       if (bwpId == 0)
+<         {
+<           cc->SetAsPrimary (true);
+<         }
+<       else
+<         {
+<           cc->SetAsPrimary (false);
+<         }
+< 
+<       ccMap.insert (std::make_pair (bwpIDs[bwpId], cc));
+<     }
+< 
+<   Ptr<LteEnbRrc> rrc = CreateObject<LteEnbRrc> ();
+<   Ptr<LteEnbComponentCarrierManager> ccmEnbManager = DynamicCast<LteEnbComponentCarrierManager> (CreateObject<BwpManagerGnb> ());
+<   DynamicCast<BwpManagerGnb> (ccmEnbManager)->SetBwpManagerAlgorithm (m_gnbBwpManagerAlgoFactory.Create <BwpManagerAlgorithm> ());
+< 
+<   // Convert Enb carrier map to only PhyConf map
+<   // we want to make RRC to be generic, to be able to work with any type of carriers, not only strictly LTE carriers
+<   std::map < uint8_t, Ptr<ComponentCarrierBaseStation> > ccPhyConfMap;
+<   for (const auto &i : ccMap)
+<     {
+<       Ptr<ComponentCarrierBaseStation> c = i.second;
+<       ccPhyConfMap.insert (std::make_pair (i.first,c));
+<     }
+< 
+<   //ComponentCarrierManager SAP
+<   rrc->SetLteCcmRrcSapProvider (ccmEnbManager->GetLteCcmRrcSapProvider ());
+<   ccmEnbManager->SetLteCcmRrcSapUser (rrc->GetLteCcmRrcSapUser ());
+<   // Set number of component carriers. Note: eNB CCM would also set the
+<   // number of component carriers in eNB RRC
+< 
+<   ccmEnbManager->SetNumberOfComponentCarriers (ccMap.size ());
+<   rrc->ConfigureCarriers (ccPhyConfMap);
+< 
+<   //nr module currently uses only RRC ideal mode
+<   bool useIdealRrc = true;
+< 
+<   if (useIdealRrc)
+<     {
+<       Ptr<NrGnbRrcProtocolIdeal> rrcProtocol = CreateObject<NrGnbRrcProtocolIdeal> ();
+<       rrcProtocol->SetLteEnbRrcSapProvider (rrc->GetLteEnbRrcSapProvider ());
+<       rrc->SetLteEnbRrcSapUser (rrcProtocol->GetLteEnbRrcSapUser ());
+<       rrc->AggregateObject (rrcProtocol);
+<     }
+<   else
+<     {
+<       Ptr<LteEnbRrcProtocolReal> rrcProtocol = CreateObject<LteEnbRrcProtocolReal> ();
+<       rrcProtocol->SetLteEnbRrcSapProvider (rrc->GetLteEnbRrcSapProvider ());
+<       rrc->SetLteEnbRrcSapUser (rrcProtocol->GetLteEnbRrcSapUser ());
+<       rrc->AggregateObject (rrcProtocol);
+<     }
+< 
+<   if (m_epcHelper != nullptr)
+<     {
+<       EnumValue epsBearerToRlcMapping;
+<       rrc->GetAttribute ("EpsBearerToRlcMapping", epsBearerToRlcMapping);
+<       // it does not make sense to use RLC/SM when also using the EPC
+<       if (epsBearerToRlcMapping.Get () == LteEnbRrc::RLC_SM_ALWAYS)
+<         {
+<           rrc->SetAttribute ("EpsBearerToRlcMapping", EnumValue (LteEnbRrc::RLC_UM_ALWAYS));
+<         }
+<     }
+< 
+<   // This RRC attribute is used to connect each new RLC instance with the MAC layer
+<   // (for function such as TransmitPdu, ReportBufferStatusReport).
+<   // Since in this new architecture, the component carrier manager acts a proxy, it
+<   // will have its own LteMacSapProvider interface, RLC will see it as through original MAC
+<   // interface LteMacSapProvider, but the function call will go now through LteEnbComponentCarrierManager
+<   // instance that needs to implement functions of this interface, and its task will be to
+<   // forward these calls to the specific MAC of some of the instances of component carriers. This
+<   // decision will depend on the specific implementation of the component carrier manager.
+<   rrc->SetLteMacSapProvider (ccmEnbManager->GetLteMacSapProvider ());
+<   rrc->SetForwardUpCallback (MakeCallback (&NrGnbNetDevice::Receive, dev));
+< 
+<   uint8_t pos = 0;
+<   for (auto it = ccMap.begin (); it != ccMap.end (); ++it)
+<     {
+< //	  uint8_t pos = uint8_t(it->second->GetPhy()->GetBwpId());
+<       it->second->GetPhy ()->SetEnbCphySapUser (rrc->GetLteEnbCphySapUser (pos));
+<       rrc->SetLteEnbCphySapProvider (it->second->GetPhy ()->GetEnbCphySapProvider (), pos);
+< 
+<       rrc->SetLteEnbCmacSapProvider (it->second->GetMac ()->GetEnbCmacSapProvider (), pos );
+<       it->second->GetMac ()->SetEnbCmacSapUser (rrc->GetLteEnbCmacSapUser (pos));
+< 
+<       // PHY <--> MAC SAP
+<       it->second->GetPhy ()->SetPhySapUser (it->second->GetMac ()->GetPhySapUser ());
+<       it->second->GetMac ()->SetPhySapProvider (it->second->GetPhy ()->GetPhySapProvider ());
+<       // PHY <--> MAC SAP END
+< 
+<       //Scheduler SAP
+<       it->second->GetMac ()->SetNrMacSchedSapProvider (it->second->GetScheduler ()->GetMacSchedSapProvider ());
+<       it->second->GetMac ()->SetNrMacCschedSapProvider (it->second->GetScheduler ()->GetMacCschedSapProvider ());
+< 
+<       it->second->GetScheduler ()->SetMacSchedSapUser (it->second->GetMac ()->GetNrMacSchedSapUser ());
+<       it->second->GetScheduler ()->SetMacCschedSapUser (it->second->GetMac ()->GetNrMacCschedSapUser ());
+<       // Scheduler SAP END
+< 
+<       it->second->GetMac ()->SetLteCcmMacSapUser (ccmEnbManager->GetLteCcmMacSapUser ());
+<       ccmEnbManager->SetCcmMacSapProviders (it->first, it->second->GetMac ()->GetLteCcmMacSapProvider ());
+< 
+<       // insert the pointer to the LteMacSapProvider interface of the MAC layer of the specific component carrier
+<       ccmEnbManager->SetMacSapProvider (it->first, it->second->GetMac ()->GetMacSapProvider ());
+< 
+<       pos++;
+<     }
+< 
+< 
+<   dev->SetAttribute ("LteEnbComponentCarrierManager", PointerValue (ccmEnbManager));
+<   dev->SetCcMap (ccMap);
+<   dev->SetAttribute ("LteEnbRrc", PointerValue (rrc));
+<   dev->Initialize ();
+< 
+<   n->AddDevice (dev);
+< 
+<   if (m_epcHelper != nullptr)
+<     {
+<       NS_LOG_INFO ("adding this eNB to the EPC");
+<       m_epcHelper->AddEnb (n, dev, dev->GetCellIds ());
+<       Ptr<EpcEnbApplication> enbApp = n->GetApplication (0)->GetObject<EpcEnbApplication> ();
+<       NS_ASSERT_MSG (enbApp != nullptr, "cannot retrieve EpcEnbApplication");
+< 
+<       // S1 SAPs
+<       rrc->SetS1SapProvider (enbApp->GetS1SapProvider ());
+<       enbApp->SetS1SapUser (rrc->GetS1SapUser ());
+< 
+<       // X2 SAPs
+<       Ptr<EpcX2> x2 = n->GetObject<EpcX2> ();
+<       x2->SetEpcX2SapUser (rrc->GetEpcX2SapUser ());
+<       rrc->SetEpcX2SapProvider (x2->GetEpcX2SapProvider ());
+<     }
+< 
+<   return dev;
+< }
+< 
+1433,1464d1058
+< // MODIFICATION: Added this function
+< void
+< NrHelper::AttachToEnb (const Ptr<NetDevice> &ueDevice,
+<                        const Ptr<NetDevice> &gnbDevice,
+< 					   uint32_t ueTrafficProfileIndex)
+< {
+<   Ptr<NrGnbNetDevice> enbNetDev = gnbDevice->GetObject<NrGnbNetDevice> ();
+<   Ptr<NrUeNetDevice> ueNetDev = ueDevice->GetObject<NrUeNetDevice> ();
+< 
+<   NS_ABORT_IF (enbNetDev == nullptr || ueNetDev == nullptr);
+< 
+<   uint8_t bwpIndex = uint8_t(ueTrafficProfileIndex);
+< 
+<   enbNetDev->GetPhy(bwpIndex)->RegisterUe (ueNetDev->GetImsi (), ueNetDev);
+<   ueNetDev->GetPhy (bwpIndex)->RegisterToEnb (enbNetDev->GetBwpId (bwpIndex));
+<   ueNetDev->GetPhy (bwpIndex)->SetDlAmc (
+< 		DynamicCast<NrMacSchedulerNs3> (enbNetDev->GetScheduler (bwpIndex))->GetDlAmc ());
+<   ueNetDev->GetPhy (bwpIndex)->SetDlCtrlSyms (enbNetDev->GetMac(bwpIndex)->GetDlCtrlSyms ());
+<   ueNetDev->GetPhy (bwpIndex)->SetUlCtrlSyms (enbNetDev->GetMac(bwpIndex)->GetUlCtrlSyms ());
+<   ueNetDev->GetPhy (bwpIndex)->SetNumRbPerRbg (enbNetDev->GetMac(bwpIndex)->GetNumRbPerRbg());
+<   ueNetDev->GetPhy (bwpIndex)->SetRbOverhead (enbNetDev->GetPhy (bwpIndex)->GetRbOverhead ());
+<   ueNetDev->GetPhy (bwpIndex)->SetSymbolsPerSlot (enbNetDev->GetPhy (bwpIndex)->GetSymbolsPerSlot ());
+<   ueNetDev->GetPhy (bwpIndex)->SetNumerology (enbNetDev->GetPhy(bwpIndex)->GetNumerology ());
+<   ueNetDev->GetPhy (bwpIndex)->SetPattern (enbNetDev->GetPhy (bwpIndex)->GetPattern ());
+<   Ptr<EpcUeNas> ueNas = ueNetDev->GetNas ();	// avoid redeclaration
+<   ueNas->Connect (enbNetDev->GetBwpId (bwpIndex), enbNetDev->GetEarfcn (bwpIndex));
+< 
+<   if (m_epcHelper)
+<     {
+<       // activate default EPS bearer
+<       m_epcHelper->ActivateEpsBearer (ueDevice, ueNetDev->GetImsi (), EpcTft::Default (), EpsBearer (EpsBearer::NGBR_VIDEO_TCP_DEFAULT));
+<     }
+1466,1476d1059
+<   // tricks needed for the simplified LTE-only simulations
+<   //if (m_epcHelper == 0)
+<   //{
+<   ueNetDev->SetTargetEnb (enbNetDev);
+<   //}
+< 
+<   if (m_beamformingHelper)
+<     {
+<       m_beamformingHelper->AddBeamformingTask (enbNetDev, ueNetDev, bwpIndex);
+<     }
+< }
+1917c1500
+<   //EnableGnbPacketCountTrace ();
+---
+>   //EnableEnbPacketCountTrace ();
+diff -r nr/helper/nr-helper.h nr-master/helper/nr-helper.h
+244,257d243
+< 
+<   /**	MODIFICATION: Added this function
+<    * \brief Install one (or more) UEs
+<    * \param c Node container with the UEs
+<    * \param allBwps The spectrum configuration that comes from CcBwpHelper
+<    * \param bwpIDs IDs of the acctive BWPs
+<    * \return a NetDeviceContainer with the net devices that have been installed.
+<    *
+<    */
+<   NetDeviceContainer InstallUeDevice (const NodeContainer &c,
+<                                       const std::vector<std::reference_wrapper<BandwidthPartInfoPtr>> &allBwps,
+< 									  const std::vector<uint32_t> bwpIDs,
+< 									  uint8_t numberOfPanels = 1);
+< 
+268,279d253
+<   /**	MODIFICATION: Added this function
+<      * \brief Install one (or more) GNBs
+<      * \param c Node container with the GNB
+<      * \param allBwps The spectrum configuration that comes from CcBwpHelper
+<      * \param bwpIDs IDs of the acctive BWPs
+<      * \return a NetDeviceContainer with the net devices that have been installed.
+<      */
+<     NetDeviceContainer InstallGnbDevice (const NodeContainer &c,
+<                                          const std::vector<std::reference_wrapper<BandwidthPartInfoPtr>> allBwps,
+<   									     const std::vector<uint32_t> bwpIDs,
+< 										 uint8_t numberOfPanels = 1);
+< 
+347,354d320
+<   //MODIFICATION: Added this function
+<   /**
+<    * \brief Attach a UE to a particular GNB
+<    * \param ueDevice the UE device
+<    * \param gnbDevice the GNB device to which attach the UE
+<    */
+<   void AttachToEnb (const Ptr<NetDevice> &ueDevice, const Ptr<NetDevice> &gnbDevice, uint32_t ueTrafficProfileIndex);
+< 
+925,929d890
+<   // MODIFICATION: Addedd this function
+<   Ptr<NetDevice> InstallSingleUeDevice (const Ptr<Node> &n,
+<                                         const std::vector<std::reference_wrapper<BandwidthPartInfoPtr>> allBwps,
+< 										const std::vector<uint32_t> bwpIDs,
+< 										uint8_t numberOfPanels);
+933,937d893
+<   // MODIFICATION: Addedd this function
+<   Ptr<NetDevice> InstallSingleGnbDevice (const Ptr<Node> &n,
+<                                          const std::vector<std::reference_wrapper<BandwidthPartInfoPtr>> allBwps,
+< 										 const std::vector<uint32_t> bwpIDs,
+< 										 uint8_t numberOfPanels);
+diff -r nr/helper/realistic-beamforming-helper.cc nr-master/helper/realistic-beamforming-helper.cc
+96,139d95
+< void
+< RealisticBeamformingHelper::AddBeamformingTask (const Ptr<NrGnbNetDevice>& gNbDev,
+<                                                 const Ptr<NrUeNetDevice>& ueDev,
+< 												const uint8_t iTarget)
+< {
+<   NS_LOG_FUNCTION (this);
+< 
+<   uint8_t gnbAntennaArrays = gNbDev->GetPhy (iTarget)->GetNumberOfStreams ();
+<   uint8_t ueAntennaArrays = ueDev->GetPhy (iTarget)->GetNumberOfStreams ();
+<   uint8_t arrays = std::min (gnbAntennaArrays, ueAntennaArrays);
+<   NS_ASSERT (arrays);
+< 
+<   //TODO add assert to check if they are of the same polarization
+< 
+<   for (uint8_t arrayIndex = 0; arrayIndex < arrays; arrayIndex++)
+< 	{
+< 	  Ptr<NrSpectrumPhy> gnbSpectrumPhy = gNbDev->GetPhy (iTarget)->GetSpectrumPhy (arrayIndex);
+< 	  Ptr<NrSpectrumPhy> ueSpectrumPhy = ueDev->GetPhy (iTarget)->GetSpectrumPhy (arrayIndex);
+< 
+< 	  auto itAlgorithms = m_antennaPairToAlgorithm.find(std::make_pair (gnbSpectrumPhy, ueSpectrumPhy));
+< 	  NS_ABORT_MSG_IF ( itAlgorithms != m_antennaPairToAlgorithm.end(),
+< 						"Realistic beamforming task already created for the provided devices");
+< 
+< 	  // for each pair of antenna arrays of transmiter and receiver create an instance of beamforming algorithm
+< 	  Ptr<RealisticBeamformingAlgorithm> beamformingAlgorithm = m_algorithmFactory.Create<RealisticBeamformingAlgorithm> ();
+< 
+< 	  Ptr<NrMacScheduler> sched = gNbDev ->GetScheduler (iTarget);
+< 
+< 	  beamformingAlgorithm->Install (gNbDev,
+< 									 ueDev,
+< 									 gnbSpectrumPhy,
+< 									 ueSpectrumPhy,
+< 									 sched
+< 									 );
+< 
+< 	  m_antennaPairToAlgorithm [std::make_pair(gnbSpectrumPhy, ueSpectrumPhy)] = beamformingAlgorithm;
+< 	  //connect trace of the corresponding gNB PHY to the RealisticBeamformingAlgorithm funcition
+< 	  gnbSpectrumPhy->AddSrsSinrReportCallback (MakeCallback (&RealisticBeamformingAlgorithm::NotifySrsSinrReport, beamformingAlgorithm));
+< 	  gnbSpectrumPhy->AddSrsSnrReportCallback (MakeCallback (&RealisticBeamformingAlgorithm::NotifySrsSnrReport, beamformingAlgorithm));
+< 	  beamformingAlgorithm->SetTriggerCallback (MakeCallback (&RealisticBeamformingHelper::RunTask, this));
+< 	}
+< }
+< 
+< 
+diff -r nr/helper/realistic-beamforming-helper.h nr-master/helper/realistic-beamforming-helper.h
+90,98d89
+<   /** MODIFICATION: Added function
+<    * \brief Adds the beamforming task to the list of tasks
+<    * \gnbDev gNbDev pointer to gNB device
+<    * \ueDev ueDev pointer to UE device
+<    */
+<   virtual void AddBeamformingTask (const Ptr<NrGnbNetDevice>& gNbDev,
+<                                    const Ptr<NrUeNetDevice>& ueDev,
+< 								   const uint8_t iTarget) override;
+< 
+Only in nr/model: node-mobility.cc
+Only in nr/model: node-mobility.h
+diff -r nr/model/nr-gnb-net-device.cc nr-master/model/nr-gnb-net-device.cc
+114c114
+< //      NS_ASSERT_MSG (m_ccMap.size () > bwpId, "Returned bwp " << +bwpId << " is not present. Check your configuration");	// MODIFICATION: Commented this line
+---
+>       NS_ASSERT_MSG (m_ccMap.size () > bwpId, "Returned bwp " << +bwpId << " is not present. Check your configuration");
+157,162c157
+<   for (auto it = m_ccMap.begin (); it != m_ccMap.end (); ++it)		// MODIFICATION: Added for cycle
+<     {
+< 	  if (it->first == index)
+< 		  return m_ccMap.at(index)->GetPhy ();
+<     }
+<   return m_ccMap.at (index)->GetPhy ();	// MODIFICATION: m_ccMap.at(index) -> m_ccMap.begin ()->second
+---
+>   return m_ccMap.at (index)->GetPhy ();
+178,190d172
+< // MODIFICATION: Added this function
+< uint16_t
+< NrGnbNetDevice::GetCellId (uint16_t index) const
+< {
+<   NS_LOG_FUNCTION (this);
+<   for (auto it = m_ccMap.begin (); it != m_ccMap.end (); ++it)
+<     {
+< 	  if (it->second->GetCellId () == index)
+< 		  return it->second->GetCellId ();
+<     }
+<   return m_ccMap.begin ()->second->GetCellId ();		// cell not found
+< }
+< 
+215,220c197
+<   for (auto it = m_ccMap.begin (); it != m_ccMap.end (); ++it)		// MODIFICATION: Added for cycle and bool variable
+<     {
+< 	  if (it->first == index)
+< 		  return m_ccMap.at(index)->GetCellId ();
+<     }
+<   return m_ccMap.begin()->second->GetCellId ();		// MODIFICATION: m_ccMap.at(index) -> m_ccMap.begin ()->second
+---
+>   return m_ccMap.at(index)->GetCellId ();
+diff -r nr/model/nr-gnb-net-device.h nr-master/model/nr-gnb-net-device.h
+68,69d67
+<   uint16_t GetCellId (uint16_t index) const;	// MODIFICATION: Added this function
+< 
+diff -r nr/model/nr-gnb-phy.cc nr-master/model/nr-gnb-phy.cc
+710,711c710,711
+< //  if (m_isPrimary)	// MODIFICATION: Commented the if cycle to let sending the MIB not only in the primary phy
+< //    {
+---
+>   if (m_isPrimary)
+>     {
+732c732
+< //    }
+---
+>     }
+1355c1355
+<   bool found = true;	// MODIFICATION: false -> true
+---
+>   bool found = false;
+diff -r nr/model/nr-rrc-protocol-ideal.cc nr-master/model/nr-rrc-protocol-ideal.cc
+195,198c195
+< //              for (uint32_t h = 0; h < gnbDev->GetCcMapSize (); ++h)	// MODIFICATION: Commented these lines
+< //                {
+< //                  if (gnbDev->GetBwpId (h) == bwpId)
+<         	  if (gnbDev->GetCellId (bwpId) == bwpId)				// MODIFICATION: Added this if
+---
+>               for (uint32_t h = 0; h < gnbDev->GetCcMapSize (); ++h)
+200,201c197,201
+<         		  found = true;
+<                   break;
+---
+>                   if (gnbDev->GetBwpId (h) == bwpId)
+>                     {
+>                       found = true;
+>                       break;
+>                     }
+203d202
+< //                }
+diff -r nr/model/nr-spectrum-phy.cc nr-master/model/nr-spectrum-phy.cc
+1190c1190
+<       GetTBInfo (tbIt).m_isCorrupted = false;	// MODIFICATION: m_random->GetValue () > GetTBInfo(tbIt).m_outputOfEM->m_tbler ? false : true   ->   false
+---
+>       GetTBInfo (tbIt).m_isCorrupted = m_random->GetValue () > GetTBInfo(tbIt).m_outputOfEM->m_tbler ? false : true;
+diff -r nr/model/nr-ue-net-device.cc nr-master/model/nr-ue-net-device.cc
+163c163
+< //      NS_ASSERT_MSG (m_ccMap.size () > bwpId, "Returned bwp " << +bwpId << " is not present. Check your configuration");	// MODIFICATION: Commented this line
+---
+>       NS_ASSERT_MSG (m_ccMap.size () > bwpId, "Returned bwp " << +bwpId << " is not present. Check your configuration");
+223,228c223
+<   for (auto it = m_ccMap.begin (); it != m_ccMap.end (); ++it)		// MODIFICATION: Added for cycle
+<     {
+< 	  if (it->first == index)
+< 		  return m_ccMap.at(index)->GetPhy ();
+<     }
+<   return m_ccMap.begin()->second->GetPhy ();		// MODIFICATION: m_ccMap.at(index) -> m_ccMap.begin ()->second
+---
+>   return m_ccMap.at (index)->GetPhy ();
+Only in nr/model: sgp4ext.cpp
+Only in nr/model: sgp4ext.h
+Only in nr/model: sgp4io.cpp
+Only in nr/model: sgp4io.h
+Only in nr/model: sgp4unit.cpp
+Only in nr/model: sgp4unit.h
+diff -r nr/README.md nr-master/README.md
+176c176
+< $ python3 doc/m.css/doxygen/dox2html5.py doc/doxygen-mcss.conf --debug
+---
+> $ python3 doc/m.css/documentation/doxygen.py doc/doxygen-mcss.conf --debug

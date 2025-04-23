@@ -1,0 +1,99 @@
+diff -r lte/model/lte-enb-component-carrier-manager.cc lte-master/model/lte-enb-component-carrier-manager.cc
+89,92c89,92
+<   //if ((uint16_t) componentCarrierId > m_noOfComponentCarriers)		// MODIFICATION: Commented these lines
+<   //  {
+<   //    NS_FATAL_ERROR ("Inconsistent componentCarrierId or you didn't call SetNumberOfComponentCarriers before calling this method");
+<   //  }
+---
+>   if ((uint16_t) componentCarrierId > m_noOfComponentCarriers)
+>     {
+>       NS_FATAL_ERROR ("Inconsistent componentCarrierId or you didn't call SetNumberOfComponentCarriers before calling this method");
+>     }
+diff -r lte/model/lte-enb-rrc.cc lte-master/model/lte-enb-rrc.cc
+1807c1807
+<                    UintegerValue (320),		// MODIFICATION: 40 -> 320 to increase the maximum number of UEs that can be attached to the same gNB
+---
+>                    UintegerValue (40),
+2287d2286
+<   uint32_t count = 0;	// MODIFICATION: Added this line
+2290,2294c2289,2293
+<       m_cphySapProvider.at (count)->SetBandwidth (it.second->GetUlBandwidth (), it.second->GetDlBandwidth ());	// MODIFICATION: it.first -> count
+<       m_cphySapProvider.at (count)->SetEarfcn (it.second->GetUlEarfcn (), it.second->GetDlEarfcn ());			// MODIFICATION: it.first -> count
+<       m_cphySapProvider.at (count)->SetCellId (it.second->GetCellId ());										// MODIFICATION: it.first -> count
+<       m_cmacSapProvider.at (count)->ConfigureMac (it.second->GetUlBandwidth (), it.second->GetDlBandwidth ());	// MODIFICATION: it.first -> count
+<       if (m_ffrRrcSapProvider.size () > count)																	// MODIFICATION: it.first -> count
+---
+>       m_cphySapProvider.at (it.first)->SetBandwidth (it.second->GetUlBandwidth (), it.second->GetDlBandwidth ());
+>       m_cphySapProvider.at (it.first)->SetEarfcn (it.second->GetUlEarfcn (), it.second->GetDlEarfcn ());
+>       m_cphySapProvider.at (it.first)->SetCellId (it.second->GetCellId ());
+>       m_cmacSapProvider.at (it.first)->ConfigureMac (it.second->GetUlBandwidth (), it.second->GetDlBandwidth ());
+>       if (m_ffrRrcSapProvider.size () > it.first)
+2296,2297c2295,2296
+<           m_ffrRrcSapProvider.at (count)->SetCellId (it.second->GetCellId ());											// MODIFICATION: it.first -> count
+<           m_ffrRrcSapProvider.at (count)->SetBandwidth (it.second->GetUlBandwidth (), it.second->GetDlBandwidth ());	// MODIFICATION: it.first -> count
+---
+>           m_ffrRrcSapProvider.at (it.first)->SetCellId (it.second->GetCellId ());
+>           m_ffrRrcSapProvider.at (it.first)->SetBandwidth (it.second->GetUlBandwidth (), it.second->GetDlBandwidth ());
+2299d2297
+<       count++;			// MODIFICATION: Added this line
+2335d2332
+<   count = 0;	// MODIFICATION: Added this line
+2342c2339
+<       m_cphySapProvider.at (count)->SetMasterInformationBlock (mib);		// MODIFICATION: it.first -> count
+---
+>       m_cphySapProvider.at (it.first)->SetMasterInformationBlock (mib);
+2353,2354c2350
+<       m_cphySapProvider.at (count)->SetSystemInformationBlockType1 (sib1);	// MODIFICATION: it.first -> count
+<       count++;	// MODIFICATION: Added this line
+---
+>       m_cphySapProvider.at (it.first)->SetSystemInformationBlockType1 (sib1);
+2403,2404c2399
+<   auto it = m_componentCarrierPhyConf.begin ();						// MODIFICATION: Added line
+<   return m_componentCarrierPhyConf.at (it->first)->GetCellId ();	// MODIFICATION: componentCarrierId -> it->first
+---
+>   return m_componentCarrierPhyConf.at (componentCarrierId)->GetCellId ();
+3174c3169
+<       uint8_t ccId = 0;		// MODIFICATION: it.first -> 0
+---
+>       uint8_t ccId = it.first;
+diff -r lte/model/lte-ue-component-carrier-manager.cc lte-master/model/lte-ue-component-carrier-manager.cc
+78,81c78,81
+<   //if (componentCarrierId > m_noOfComponentCarriers)	// MODIFICATION: Commented these lines
+<   //  {
+<   //    NS_FATAL_ERROR ("Inconsistent componentCarrierId or you didn't call SetNumberOfComponentCarriers before calling this method");
+<   //  }
+---
+>   if (componentCarrierId > m_noOfComponentCarriers)
+>     {
+>       NS_FATAL_ERROR ("Inconsistent componentCarrierId or you didn't call SetNumberOfComponentCarriers before calling this method");
+>     }
+diff -r lte/model/lte-ue-rrc.cc lte-master/model/lte-ue-rrc.cc
+1364c1364
+<       uint8_t ccId = 0;		// MODIFICATION: scell.sCellIndex -> 0
+---
+>       uint8_t ccId = scell.sCellIndex;
+1375c1375
+<       // m_cphySapProvider.at (ccId)->SynchronizeWithEnb (physCellId, dlEarfcn);
+---
+>       m_cphySapProvider.at (ccId)->SynchronizeWithEnb (physCellId, dlEarfcn);
+diff -r lte/model/simple-ue-component-carrier-manager.cc lte-master/model/simple-ue-component-carrier-manager.cc
+324,325c324
+<     	  auto it = m_macSapProvidersMap.begin ();						// MODIFICATION: Added line
+<     	  ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcId, m_macSapProvidersMap.at (it->first)));	// MODIFICATION: ncc -> it->first
+---
+>           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcId, m_macSapProvidersMap.at (ncc)));
+334,335c333
+<           auto it = m_macSapProvidersMap.begin ();						// MODIFICATION: Added line
+<           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcId, m_macSapProvidersMap.at (it->first)));	// MODIFICATION: ncc -> it->first
+---
+>           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcId, m_macSapProvidersMap.at (ncc)));
+359,360c357
+<           auto it = m_macSapProvidersMap.begin ();						// MODIFICATION: Added line
+<           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcid, m_macSapProvidersMap.at (it->first)));	// MODIFICATION: ncc -> it->first
+---
+>           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcid, m_macSapProvidersMap.at (ncc)));
+369,370c366
+<           auto it = m_macSapProvidersMap.begin ();						// MODIFICATION: Added line
+<           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcid, m_macSapProvidersMap.at (it->first)));	// MODIFICATION: ncc -> it->first
+---
+>           ccLcMapIt->second.insert (std::pair <uint8_t, LteMacSapProvider*> (lcid, m_macSapProvidersMap.at (ncc)));

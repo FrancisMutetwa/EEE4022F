@@ -1,0 +1,6 @@
+% time(s)	cellId	bwpId	IMSI	RNTI	frame	sframe	slot	symStart	numSym	stream	harqId	ndi	rv	mcs	tbSize
+1.202	1	0	1	1	120	4	0	1	10	0	19	1	0	0	1169
+1.302	1	0	1	1	130	4	0	1	1	0	19	1	0	22	2849
+1.402	1	0	1	1	140	4	0	1	1	0	19	1	0	22	2849
+1.502	1	0	1	1	150	4	0	1	1	0	19	1	0	22	2849
+1.602	1	0	1	1	160	4	0	1	1	0	19	1	0	22	2849

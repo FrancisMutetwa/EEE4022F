@@ -1,0 +1,6 @@
+Time	direction	frame	subF	slot	1stSym	nSymbol	cellId	bwpId	streamId	rnti	tbSize	mcs	rv	SINR(dB)	CQI	corrupt	TBler
+1.20479	DL	120	4	0	1	10	1	0	0	1	1169	0	0	15.7318	12	0	0
+1.30414	DL	130	4	0	1	1	1	0	0	1	2849	22	0	15.7318	12	0	0
+1.40414	DL	140	4	0	1	1	1	0	0	1	2849	22	0	15.7318	12	0	0
+1.50414	DL	150	4	0	1	1	1	0	0	1	2849	22	0	15.7318	12	0	0
+1.60414	DL	160	4	0	1	1	1	0	0	1	2849	22	0	15.7318	12	0	0
