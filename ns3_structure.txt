@@ -1,0 +1,522 @@
+.
+├── anchor-simulator
+│   ├── * -> ../../../Input/1 - 10SAT_1OP_10UER_100UEF/*
+│   ├── Input
+│   │   ├── 10 - 1000SAT_25OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 1 - 10SAT_1OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocationPrevious.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 11 - 1000SAT_50OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 12 - 3000SAT_50OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 13 - 3000SAT_100OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 2 - 10SAT_1OP_10UER_200UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocationPrevious.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 3 - 10SAT_1OP_10UER_500UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocationPrevious.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 4 - 10SAT_1OP_20UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocationPrevious.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocationPrevious.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 6 - 10SAT_1OP_100UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 7 - 100SAT_10OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 8 - 500SAT_25OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   ├── 9 - 500SAT_50OP_10UER_100UEF
+│   │   │   ├── devicesPerUE.txt
+│   │   │   ├── networkConfiguration.txt
+│   │   │   ├── resourceAllocation.txt
+│   │   │   ├── satelliteTLEs.txt
+│   │   │   ├── trafficFlowParameters.txt
+│   │   │   └── UECoordinates.txt
+│   │   └── T11
+│   │       ├── devicesPerUE.txt
+│   │       ├── networkConfiguration.txt
+│   │       ├── resourceAllocation.txt
+│   │       ├── satelliteTLEs.txt
+│   │       ├── trafficFlowParameters.txt
+│   │       └── UECoordinates.txt
+│   ├── Modifications LTE module.txt
+│   ├── Modifications NR module.txt
+│   ├── ns-3.36
+│   │   ├── * -> ../../../Input/1 - 10SAT_1OP_10UER_100UEF/*
+│   │   ├── AUTHORS
+│   │   ├── bindings
+│   │   │   └── python
+│   │   ├── build
+│   │   │   ├── examples
+│   │   │   ├── include
+│   │   │   ├── lib
+│   │   │   ├── scratch
+│   │   │   ├── src
+│   │   │   └── utils
+│   │   ├── build-support
+│   │   │   ├── 3rd-party
+│   │   │   ├── cmake-format-modules.txt
+│   │   │   ├── cmake-format.txt
+│   │   │   ├── Config.cmake.in
+│   │   │   ├── config-store-config-template.h
+│   │   │   ├── core-config-template.h
+│   │   │   ├── custom-modules
+│   │   │   ├── empty.cc
+│   │   │   ├── empty-main.cc
+│   │   │   ├── iwyu-wrapper.sh
+│   │   │   ├── macros-and-definitions.cmake
+│   │   │   ├── pkgconfig-template.pc.in
+│   │   │   ├── pybindings-LP64-to-ILP32.py
+│   │   │   ├── version.cache.in
+│   │   │   └── version-defines-template.h
+│   │   ├── CHANGES.md
+│   │   ├── cmake-cache
+│   │   │   ├── build.ninja
+│   │   │   ├── CMakeCache.txt
+│   │   │   ├── CMakeDoxyfile.in
+│   │   │   ├── CMakeDoxygenDefaults.cmake
+│   │   │   ├── CMakeFiles
+│   │   │   ├── cmake_install.cmake
+│   │   │   ├── compile_commands.json
+│   │   │   ├── CTestTestfile.cmake
+│   │   │   ├── examples
+│   │   │   ├── ns3Config.cmake
+│   │   │   ├── ns3config.txt
+│   │   │   ├── ns3ConfigVersion.cmake
+│   │   │   ├── ns3scratches
+│   │   │   ├── pkgconfig
+│   │   │   ├── scratch
+│   │   │   ├── src
+│   │   │   └── utils
+│   │   ├── CMakeLists.txt
+│   │   ├── CONTRIBUTING.md
+│   │   ├── dctcp-example-fairness.dat
+│   │   ├── dctcp-example-s1-r1-throughput.dat
+│   │   ├── dctcp-example-s2-r2-throughput.dat
+│   │   ├── dctcp-example-s3-r1-throughput.dat
+│   │   ├── dctcp-example-t1-length.dat
+│   │   ├── dctcp-example-t2-length.dat
+│   │   ├── default
+│   │   ├── doc
+│   │   │   ├── build.txt
+│   │   │   ├── codingstd.txt
+│   │   │   ├── contributing
+│   │   │   ├── contributing.txt
+│   │   │   ├── doxygen.conf
+│   │   │   ├── doxygen.warnings.report.sh
+│   │   │   ├── introspected-command-line.h
+│   │   │   ├── main.h
+│   │   │   ├── manual
+│   │   │   ├── models
+│   │   │   ├── modules
+│   │   │   ├── namespace-2.dia
+│   │   │   ├── namespace-2.png
+│   │   │   ├── ns3_html_theme
+│   │   │   ├── release_steps.txt
+│   │   │   └── tutorial
+│   │   ├── examples
+│   │   │   ├── channel-models
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── energy
+│   │   │   ├── error-model
+│   │   │   ├── ipv6
+│   │   │   ├── matrix-topology
+│   │   │   ├── naming
+│   │   │   ├── realtime
+│   │   │   ├── routing
+│   │   │   ├── socket
+│   │   │   ├── stats
+│   │   │   ├── tcp
+│   │   │   ├── traffic-control
+│   │   │   ├── tutorial
+│   │   │   ├── udp
+│   │   │   ├── udp-client-server
+│   │   │   └── wireless
+│   │   ├── LICENSE
+│   │   ├── netanim-example.xml
+│   │   ├── nr-rem--buildings.txt
+│   │   ├── nr-rem--gnbs.txt
+│   │   ├── nr-rem-.out
+│   │   ├── nr-rem--plot-rem.gnuplot
+│   │   ├── nr-rem--ues.txt
+│   │   ├── ns3
+│   │   ├── ns3_structure.txt
+│   │   ├── __pycache__
+│   │   │   └── utils.cpython-38.pyc
+│   │   ├── README.md
+│   │   ├── RELEASE_NOTES.md
+│   │   ├── scratch
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── netanim-example.cc
+│   │   │   ├── scratch-simulator.cc
+│   │   │   └── subdir
+│   │   ├── src
+│   │   │   ├── antenna
+│   │   │   ├── aodv
+│   │   │   ├── applications
+│   │   │   ├── bridge
+│   │   │   ├── brite
+│   │   │   ├── buildings
+│   │   │   ├── click
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── config-store
+│   │   │   ├── core
+│   │   │   ├── csma
+│   │   │   ├── csma-layout
+│   │   │   ├── dsdv
+│   │   │   ├── dsr
+│   │   │   ├── energy
+│   │   │   ├── fd-net-device
+│   │   │   ├── flow-monitor
+│   │   │   ├── internet
+│   │   │   ├── internet-apps
+│   │   │   ├── lr-wpan
+│   │   │   ├── lte
+│   │   │   ├── mesh
+│   │   │   ├── mobility
+│   │   │   ├── mpi
+│   │   │   ├── netanim
+│   │   │   ├── network
+│   │   │   ├── nix-vector-routing
+│   │   │   ├── nr
+│   │   │   ├── olsr
+│   │   │   ├── openflow
+│   │   │   ├── point-to-point
+│   │   │   ├── point-to-point-layout
+│   │   │   ├── propagation
+│   │   │   ├── sixlowpan
+│   │   │   ├── spectrum
+│   │   │   ├── stats
+│   │   │   ├── tap-bridge
+│   │   │   ├── test
+│   │   │   ├── topology-read
+│   │   │   ├── traffic-control
+│   │   │   ├── uan
+│   │   │   ├── virtual-net-device
+│   │   │   ├── visualizer
+│   │   │   ├── wave
+│   │   │   ├── wifi
+│   │   │   └── wimax
+│   │   ├── test.py
+│   │   ├── testpy.supp
+│   │   ├── utils
+│   │   │   ├── bench-packets.cc
+│   │   │   ├── bench-simulator.cc
+│   │   │   ├── check-style.py
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── coverity-report.sh
+│   │   │   ├── create-module.py
+│   │   │   ├── generate-distributions.pl
+│   │   │   ├── grid.py
+│   │   │   ├── perf
+│   │   │   ├── print-introspected-doxygen.cc
+│   │   │   ├── python-unit-tests.py
+│   │   │   ├── rescale-pdf.sh
+│   │   │   ├── run-examples-with-full-logging.sh
+│   │   │   ├── test-runner.cc
+│   │   │   ├── tests
+│   │   │   └── utils.h
+│   │   ├── utils.py
+│   │   ├── VERSION
+│   │   └── wireless-animation.xml
+│   ├── Output
+│   │   ├── 10 - 1000SAT_25OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 1 - 10SAT_1OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus_0.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults_0.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 1 - 10SAT_1OP_10UER_100UEFlogFile.txt
+│   │   ├── 11 - 1000SAT_50OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 12 - 3000SAT_50OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 13 - 3000SAT_100OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 2 - 10SAT_1OP_10UER_200UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus_0.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults_0.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 3 - 10SAT_1OP_10UER_500UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus_0.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults_0.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 4 - 10SAT_1OP_20UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus_0.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults_0.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEFlogFile.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEFnetworkStatus_0.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEFnetworkStatus.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEFperformanceResults_0.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEFsatellitePositions.txt
+│   │   ├── 5 - 10SAT_1OP_50UER_100UEFuePositions.txt
+│   │   ├── 6 - 10SAT_1OP_100UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 6 - 10SAT_1OP_100UER_100UEFlogFile.txt
+│   │   ├── 7 - 100SAT_10OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 8 - 500SAT_25OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── 9 - 500SAT_50OP_10UER_100UEF
+│   │   │   ├── averageDeliveryTime.txt
+│   │   │   ├── averageFlowDeliveryTime.txt
+│   │   │   ├── averageFlowJitter.txt
+│   │   │   ├── averageSatelliteLinkThroughput.txt
+│   │   │   ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │   │   ├── cellOccupancyPerSatellite.txt
+│   │   │   ├── flowJitter.txt
+│   │   │   ├── logFile.txt
+│   │   │   ├── networkStatus.txt
+│   │   │   ├── numberHandover.txt
+│   │   │   ├── performanceResults.txt
+│   │   │   ├── satelliteLinkThroughput.txt
+│   │   │   ├── satellitePositions.txt
+│   │   │   └── uePositions.txt
+│   │   ├── logFile.txt
+│   │   └── T11
+│   │       ├── averageDeliveryTime.txt
+│   │       ├── averageFlowDeliveryTime.txt
+│   │       ├── averageFlowJitter.txt
+│   │       ├── averageSatelliteLinkThroughput.txt
+│   │       ├── cellOccupancyPerSatellitePerCarrier.txt
+│   │       ├── cellOccupancyPerSatellite.txt
+│   │       ├── flowJitter.txt
+│   │       ├── logFile.txt
+│   │       ├── networkStatus_0.txt
+│   │       ├── networkStatus_1.txt
+│   │       ├── networkStatus_2.txt
+│   │       ├── networkStatus_3.txt
+│   │       ├── networkStatus_4.txt
+│   │       ├── networkStatus_5.txt
+│   │       ├── networkStatus_6.txt
+│   │       ├── networkStatus_7.txt
+│   │       ├── networkStatus.txt
+│   │       ├── numberHandover.txt
+│   │       ├── performanceResults.txt
+│   │       ├── satelliteLinkThroughput.txt
+│   │       ├── satellitePositions.txt
+│   │       └── uePositions.txt
+│   └── README.md
+└── ns3_structure.txt
+
+127 directories, 393 files

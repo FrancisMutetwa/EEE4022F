@@ -1,0 +1,4 @@
+# Ignore all .so files
+*.so
+*.so
+build/
