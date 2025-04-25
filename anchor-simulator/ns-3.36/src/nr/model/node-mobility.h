@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <string>
+#include "ns3/netanim-module.h"
 
 using namespace std;
 namespace ns3 {

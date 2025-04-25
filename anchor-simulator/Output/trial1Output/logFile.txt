@@ -111,5 +111,5 @@ Simulation progress: 9.8 s - 98%
 Simulation progress: 9.9 s - 99%
 Simulation progress: 10 100%
 End Simulation
-It took: 0 min and 14 sec
+It took: 0 min and 21 sec
 

@@ -18,16 +18,15 @@
 #include "ns3/log.h"
 #include <fstream>
 #include "ns3/netanim-module.h"
-
+#include <map>
+#include <limits>
+#include <cstdlib>
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("ran-simulator");
 
 void PrintSimulationStatus(uint32_t simulationDuration);
-
-
-
 
 int
 main (int argc, char *argv[])
@@ -288,6 +287,8 @@ main (int argc, char *argv[])
   //MobilityHelper terrestrialGnbMobility;
   gNbContainer.Create (numgNB);
   mobility.Install(gNbContainer);
+  //satelliteCount = gNbContainer.GetN();
+
   for (uint32_t i = 0; i < numTrafficProfile; i++)
 	{
 	  ueContainers[i].Create(numUEPerTrafProf[i]);
@@ -325,8 +326,8 @@ main (int argc, char *argv[])
   NodePositions gNBPositions[numgNB];
   double satelliteAltitudes[numgNB];
   CalculategNBPosition(numgNB, simDurationS, gNBPositions, satelliteAltitudes);
-  SetgNBPosition(gNbContainer, roundStartTime, &gNBPositions[0]);
-  Simulator::Schedule(Seconds(1.0), &SetgNBPosition, gNbContainer, roundStartTime + 1, &gNBPositions[0]);
+  SetgNBPosition(gNbContainer, roundStartTime, gNBPositions);
+  //Simulator::Schedule(Seconds(1.0), &SetgNBPosition, gNbContainer, roundStartTime + 1, gNBPositions);
   double* maximumSatelliteAltitude = max_element(satelliteAltitudes, satelliteAltitudes + numgNB);
   double maximumContactDistances[numgNB];
   for (uint32_t i = 0; i < numgNB; i++)
@@ -335,6 +336,7 @@ main (int argc, char *argv[])
   NodePositions uePositions[numTotalUE];
   CalculateUEPosition(numTotalUE, simDurationS, uePositions);
   SetUEPosition(ueGlobalContainer, roundStartTime, uePositions);
+  //Simulator::Schedule(Seconds(1.0), &SetUEPosition, ueGlobalContainer, roundStartTime + 1, uePositions);
 
   // Setup of the NR module
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue(999999999));		// we need it for legacy code (LTE)
@@ -343,14 +345,40 @@ main (int argc, char *argv[])
   Ptr<NrHelper> nrHelper = CreateObject<NrHelper> ();
   nrHelper->SetBeamformingHelper (idealBeamformingHelper);
   nrHelper->SetEpcHelper (epcHelper);
+  double terrestrialPropagationDelay = 1; // in milliseconds
 
-  // Initialize channel and pathloss
+
+// Initialize channel and pathloss
   Config::SetDefault ("ns3::ThreeGppChannelModel::UpdatePeriod",TimeValue (MilliSeconds(0)));
   nrHelper->SetChannelConditionModelAttribute ("UpdatePeriod", TimeValue (MilliSeconds (0)));
   nrHelper->SetPathlossAttribute ("ShadowingEnabled", BooleanValue (false));
   nrHelper->SetSchedulerTypeId (TypeId::LookupByName ("ns3::NrMacSchedulerTdmaRR"));
-  uint32_t meanCoreLatency = floor(*maximumSatelliteAltitude + (*maximumContactDistance - *maximumSatelliteAltitude) / 2) / LIGHT_SPEED; // Core latency (between gNB e CN). Currently fixed as a mean value between the minimum contact distance (satellite altitude) and the maximum one
-  epcHelper->SetAttribute ("S1uLinkDelay", TimeValue (MilliSeconds (meanCoreLatency)));
+
+  //Essentially a calculated propagation delay between the Satellite gNB and the Core Network
+  //uint32_t meanCoreLatency = floor(*maximumSatelliteAltitude + (*maximumContactDistance - *maximumSatelliteAltitude) / 2) / LIGHT_SPEED; // Core latency (between gNB e CN). Currently fixed as a mean value between the minimum contact distance (satellite altitude) and the maximum one()
+  //epcHelper->SetAttribute ("S1uLinkDelay", TimeValue (MilliSeconds (meanCoreLatency)));
+  
+  //Propagation delay between the terrestrial gNB and the Core Network also the propagation delay between the satellite gNB 
+  //and the core network calculated dynamically.
+  for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
+    Ptr<Node> gnbNode = gNbContainer.Get(i);
+    Ptr<Node> terrestrialgnbNode = terrestrialGnbContainer.Get(i);
+    bool isSatelliteGnb = gNbContainer.Contains(gnbNode->GetId()); // Use GetId() to get the node ID
+    bool isTerrestrialGnb = terrestrialGnbContainer.Contains(terrestrialgnbNode->GetId());
+    if (isSatelliteGnb) {
+        uint32_t meanCoreLatency = floor(*maximumSatelliteAltitude + (*maximumContactDistance - *maximumSatelliteAltitude) / 2) / LIGHT_SPEED;
+        epcHelper->SetAttribute("S1uLinkDelay", TimeValue(MilliSeconds(meanCoreLatency)));
+        //std::cout << "Satelllite gnb CN link delay: " << meanCoreLatency << " ms" << std::endl;
+    } 
+    else if (isTerrestrialGnb) {
+        epcHelper->SetAttribute("S1uLinkDelay", TimeValue(MilliSeconds(terrestrialPropagationDelay)));
+    }
+}
+
+
+
+
+
   epcHelper->SetAttribute ("S1uLinkDataRate", DataRateValue (DataRate ("1Gb/s")));		// Core data rate (between gNB e CN)
   idealBeamformingHelper->SetAttribute ("BeamformingMethod", TypeIdValue (DirectPathBeamforming::GetTypeId ()));		// Beamforming method
 
@@ -369,15 +397,10 @@ main (int argc, char *argv[])
   nrHelper->SetGnbAntennaAttribute ("AntennaElement", PointerValue (CreateObject<IsotropicAntennaModel> ()));
 
   // Antennas for all the Terrestrial gNbs
-  //Add code here
-  //Add code here
-  //Add code here
-  //Add code here
-  //Add code here
-  //Add code here
-  //Add code here
-  //Add code here
-  //Add code here
+  // Configure terrestrial gNB antennas
+  //tnHelper->SetGnbAntennaAttribute("NumRows", UintegerValue(2));
+  //tnHelper->SetGnbAntennaAttribute("NumColumns", UintegerValue(2));
+  //tnHelper->SetGnbAntennaAttribute("AntennaElement", PointerValue(CreateObject<ThreeGppAntennaModel>()));
 
 
 
@@ -643,7 +666,9 @@ resAllFile >> keyword;
 	    {
 		  if ((numUEPergNB[i][j] != 0) && activegNB[i])
 		    {
-			  nrHelper->GetGnbPhy (gnbNetDevContainer.Get (activegNBIndex), j)->SetAttribute ("Numerology", UintegerValue (numerologyBWPs[j]));
+
+			  //nrHelper->GetGnbPhy (gnbNetDevContainer.Get (activegNBIndex), j)->SetAttribute ("Numerology", UintegerValue (numerologyBWPs[j]));
+        nrHelper->GetGnbPhy(gnbNetDevContainer.Get(activegNBIndex), j)->SetAttribute("Numerology", UintegerValue(1));  // or 0, 2, etc. (just be consistent)
 			  nrHelper->GetGnbPhy (gnbNetDevContainer.Get (activegNBIndex), j)->SetAttribute ("TxPower", DoubleValue (txPower));
 			  nrHelper->GetGnbPhy (gnbNetDevContainer.Get (activegNBIndex), j)->SetAttribute ("Pattern", StringValue (pattern));
 			  bwpIndex++;
@@ -778,7 +803,7 @@ for (auto it = ueNetDevContainers[i].Begin(); it != ueNetDevContainers[i].End();
  	}
 
   //UE attachment to satellite gNBs
-  ///** 
+  /** 
   for (uint32_t i = 0; i < numTotalUE; i++)
     {
 	  if (gNBToAttachWithIndex[i] != -1)	// if == -1, no possible gNB candidates
@@ -797,8 +822,9 @@ for (auto it = ueNetDevContainers[i].Begin(); it != ueNetDevContainers[i].End();
       std::cout << "✅ UE " << i << " successfully attached to Satellite gNB " << gNBIndexChosen << "\n";
 	    }
     }
+   
 
-//*/
+*/
 
 /**  
 for (uint32_t i = 0; i < numTotalUE; i++)
@@ -816,8 +842,9 @@ for (uint32_t i = 0; i < numTotalUE; i++)
             }
         }
         nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), gnbNetDevContainer.Get(gNBIndexChosen), UETrafficProfileIndex[i]);
-    }
-    else if (terrestrialgNBToAttachWithIndex[i] != -1) // Attach to terrestrial gNB
+        std::cout << "✅ UE " << i << " successfully attached to Satellite gNB " << gNBIndexChosen << "\n";
+      }
+    else //(terrestrialgNBToAttachWithIndex[i] != -1) // Attach to terrestrial gNB
     {
         uint32_t gNBIndexChosen = 0, gNBIndex = terrestrialgNBToAttachWithIndex[i];
         for (uint32_t j = 0; j < numTerrestrialGNBs; j++)
@@ -830,7 +857,8 @@ for (uint32_t i = 0; i < numTotalUE; i++)
             }
         }
         nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), terrestrialGnbNetDevContainer.Get(gNBIndexChosen), UETrafficProfileIndex[i]);
-    }
+        std::cout << "✅ UE " << i << " successfully attached to Terrestrial gNB " << gNBIndexChosen << "\n";
+      }
 }
 */
 
@@ -858,13 +886,71 @@ for (uint32_t i = 0; i < numTotalUE; i++)
 }  
 */
 
+// Define threshold values for satellite and terrestrial gNBs
+const double SATELLITE_THRESHOLD = 1200000.0; // Example: 1200 km
+const double TERRESTRIAL_THRESHOLD = 1000.0;  // Example: 1 km
 
+for (uint32_t i = 0; i < numTotalUE; i++)
+{
+    double minDistance = std::numeric_limits<double>::max();
+    uint32_t closestGNBIndex = -1;
+    bool isSatellite = false;
 
+    Vector uePosition = ueGlobalContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
 
+    // Check satellite gNBs
+    for (uint32_t j = 0; j < numgNB; j++)
+    {
+        if (activegNB[j])
+        {
+            Vector gnbPosition = gNbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
+            double distance = CalculateDistance(uePosition, gnbPosition);
 
+            if (distance < minDistance && distance <= SATELLITE_THRESHOLD)
+            {
+                minDistance = distance;
+                closestGNBIndex = j;
+                isSatellite = true;
+            }
+        }
+    }
 
+    // Check terrestrial gNBs
+    for (uint32_t j = 0; j < numTerrestrialGNBs; j++)
+    {
+        if (activeTerrestrialGNB[j])
+        {
+            Vector gnbPosition = terrestrialGnbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
+            double distance = CalculateDistance(uePosition, gnbPosition);
 
+            if (distance < minDistance && distance <= TERRESTRIAL_THRESHOLD)
+            {
+                minDistance = distance;
+                closestGNBIndex = j;
+                isSatellite = false;
+            }
+        }
+    }
 
+    // Attach to the closest gNB
+    if (closestGNBIndex != -1)
+    {
+        if (isSatellite)
+        {
+            nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), gnbNetDevContainer.Get(closestGNBIndex), UETrafficProfileIndex[i]);
+            std::cout << "✅ UE " << i << " attached to Satellite gNB " << closestGNBIndex << " (Distance: " << minDistance << ")\n";
+        }
+        else
+        {
+            nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), terrestrialGnbNetDevContainer.Get(closestGNBIndex), UETrafficProfileIndex[i]);
+            std::cout << "✅ UE " << i << " attached to Terrestrial gNB " << closestGNBIndex << " (Distance: " << minDistance << ")\n";
+        }
+    }
+    else
+    {
+        std::cout << "❌ UE " << i << " could not find a suitable gNB within the threshold.\n";
+    }
+}
 
   cout << "UE-gNB attachments done!\n";
   logFile << "UE-gNB attachments done!\n";
@@ -992,13 +1078,17 @@ for (uint32_t i = 0; i < numTotalUE; i++)
   
 
 
-
-
+  
 
 
 
   // execute simulation
   Simulator::Stop (MilliSeconds (simRoundDurationMs));
+ 
+ 
+ 
+ 
+
 
   cout << "End Simulation preparation\n";
   cout << "\n";
@@ -1008,6 +1098,27 @@ for (uint32_t i = 0; i < numTotalUE; i++)
   logFile << "Start Simulation\n";
   logFile.close();
   PrintSimulationStatus(simRoundDurationS);
+
+  /** 
+  Ptr<Node> node5 = NodeList::GetNode(5);
+
+  if (node5->GetNDevices() > 0) {
+      std::cout << "[DEBUG] Node 5 Type: "
+                << node5->GetDevice(0)->GetInstanceTypeId().GetName()
+                << std::endl;
+  } else {
+      std::cout << "[DEBUG] Node 5 has no devices." << std::endl;
+  }
+
+  */
+
+//anim.EnableOutput(false);  // Optional: disables animation output if you want to go minimal
+
+
+
+
+
+
 
   // Set up NetAnim
 AnimationInterface anim("simulation-output.xml"); // Output file for NetAnim
@@ -1028,6 +1139,12 @@ for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
     anim.UpdateNodeColor(ueGlobalContainer.Get(i), 0, 0, 255); // Blue for UEs
 }
 
+
+
+
+
+
+
 /** 
 // Set node positions (optional, if mobility is not already handled)
 for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
@@ -1045,6 +1162,113 @@ for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
     //anim.SetConstantPosition(ueGlobalContainer.Get(i), pos.x, pos.y);
 }
 */
+
+
+
+
+  
+/** 
+Simulator::Schedule(Seconds(1.0), [=]() {
+  Ptr<Node> ue = ueGlobalContainer.Get(0);               // UE 0
+  Ptr<Node> satelliteGnb = gNbContainer.Get(0);          // Satellite gNB 0
+
+  Vector uePos = ue->GetObject<MobilityModel>()->GetPosition();
+  Vector gnbPos = satelliteGnb->GetObject<MobilityModel>()->GetPosition();
+
+  double distance = sqrt(pow(uePos.x - gnbPos.x, 2) +
+                         pow(uePos.y - gnbPos.y, 2) +
+                         pow(uePos.z - gnbPos.z, 2));
+
+  if (distance < 1200000.0) // within 1200 km
+  {
+      // Simulate handover event — but DON'T call AttachToEnb()
+      std::cout << "[Simulated Handover] UE 0 WOULD switch to Satellite gNB 0 at distance "
+                << distance / 1000.0 << " km | Time: "
+                << Simulator::Now().GetSeconds() << "s\n";
+
+      // Optional: update UE description or color in NetAnim
+      //AnimationInterface anim("handover-output.xml");
+      //anim.UpdateNodeDescription(ue, "UE 0 (Handover Sim)");
+      //anim.UpdateNodeColor(ue, 0, 255, 0);  // Green for visibility
+  }
+  else
+  {
+      // Retry every second
+      Simulator::Schedule(Seconds(1.0), [=]() {
+          // Re-run the same block recursively
+      });
+  }
+});
+*/
+
+/** 
+// Tracks the last gNB each UE was "attached" to
+std::map<uint32_t, uint32_t> currentGnbMap;
+
+Simulator::Schedule(Seconds(1.0), [&anim, &ueGlobalContainer, &gNbContainer, &currentGnbMap]() {
+    for (uint32_t i = 0; i < ueGlobalContainer.GetN(); ++i)
+    {
+        Ptr<Node> ue = ueGlobalContainer.Get(i);
+        Vector uePos = ue->GetObject<MobilityModel>()->GetPosition();
+
+        double minDistance = std::numeric_limits<double>::max();
+        uint32_t bestGnbIndex = -1;
+
+        // Give each UE its own slightly randomized handover threshold
+        double ueThreshold = 1200000.0 + (rand() % 100000);  // 1200–1300 km
+
+        for (uint32_t j = 0; j < gNbContainer.GetN(); ++j)
+        {
+            Ptr<Node> gnb = gNbContainer.Get(j);
+            Vector gnbPos = gnb->GetObject<MobilityModel>()->GetPosition();
+
+            double distance = sqrt(pow(uePos.x - gnbPos.x, 2) +
+                                   pow(uePos.y - gnbPos.y, 2) +
+                                   pow(uePos.z - gnbPos.z, 2));
+
+            if (distance < ueThreshold && distance < minDistance)
+            {
+                minDistance = distance;
+                bestGnbIndex = j;
+            }
+        }
+
+        // Only simulate handover if UE has a new best gNB
+        if (bestGnbIndex != -1 && currentGnbMap[i] != bestGnbIndex)
+        {
+            std::cout << "[Simulated Handover] UE " << i
+                      << " switches to Satellite gNB " << bestGnbIndex
+                      << " at distance " << minDistance / 1000.0 << " km | Time: "
+                      << Simulator::Now().GetSeconds() << "s\n";
+
+            // Update visualization only when gNB changes
+            anim.UpdateNodeDescription(ue, "UE " + std::to_string(i) + " -> gNB " + std::to_string(bestGnbIndex));
+            anim.UpdateNodeColor(ue, 0, 255, 0);  // Green = handed over
+
+            currentGnbMap[i] = bestGnbIndex;
+        }
+    }
+
+    // Re-schedule the next evaluation in 1 second
+    Simulator::Schedule(Seconds(1.0), [&anim, &ueGlobalContainer, &gNbContainer, &currentGnbMap]() {
+        // Repeat same block recursively
+    });
+});
+
+
+
+
+
+Packet::EnablePrinting ();
+PacketMetadata::Enable ();
+anim.EnablePacketMetadata(true);
+*/
+
+
+
+
+
+
 
 
 
@@ -1112,6 +1336,7 @@ for (auto it = stats.begin(); it != stats.end(); ++it)
 }
 
 */
+
 
 
 
@@ -1327,140 +1552,6 @@ for (auto it = stats.begin(); it != stats.end(); ++it)
   performanceResultsFile << "\n";
   performanceResultsFile << "Number of handovers\n";
   performanceResultsFile << numberOfHandovers;
-
-
-
-
-
-
-
-
- /** 
-  // Calculate and append signal propagation metrics and distances
-performanceResultsFile << "\nSignal Propagation Metrics and Distances:\n";
-
-for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++)
-{
-    Vector uePosition = ueGlobalContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-    double minDistance = std::numeric_limits<double>::max();
-    uint32_t nearestGnbIndex = 0;
-    std::string gnbType;
-
-    // Check distances to satellite gNBs
-    for (uint32_t j = 0; j < gNbContainer.GetN(); j++)
-    {
-        Vector gnbPosition = gNbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
-        double distance = CalculateDistance(uePosition, gnbPosition);
-
-        if (distance < minDistance)
-        {
-            minDistance = distance;
-            nearestGnbIndex = j;
-            gnbType = "satellite";
-        }
-    }
-
-    // Check distances to terrestrial gNBs
-    for (uint32_t j = 0; j < terrestrialGnbContainer.GetN(); j++)
-    {
-        Vector gnbPosition = terrestrialGnbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
-        double distance = CalculateDistance(uePosition, gnbPosition);
-
-        if (distance < minDistance)
-        {
-            minDistance = distance;
-            nearestGnbIndex = j;
-            gnbType = "terrestrial";
-        }
-    }
-
-    // Calculate signal propagation time (in milliseconds)
-    double signalPropagationTimeMs = (minDistance / 300000.0) * 1000.0; // Speed of light in km/ms
-
-    // Write results to the file
-    performanceResultsFile << "UE " << i << " -> Nearest gNB: " << nearestGnbIndex
-                           << " (" << gnbType << "), Distance: " << minDistance
-                           << " km, Signal Propagation Time: " << signalPropagationTimeMs << " ms\n";
-}
-
-*/
-
-/** 
-// Add terrestrial metrics to the performance results file
-performanceResultsFile << "Aggregated throughput per terrestrial channel [Mbps]\n";
-double terrestrialLinkThroughput[numTerrestrialGNBs];
-for (uint32_t l = 0; l < numTerrestrialGNBs; l++)
-    terrestrialLinkThroughput[l] = 0;
-
-uint32_t z = 0;
-for (map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin(); i != stats.end(); ++i)
-{
-    if (i->second.rxPackets > 0)
-    {
-        // Measure the terrestrial link throughput [Mbps]
-        double rxDuration = i->second.timeLastRxPacket.GetSeconds() - i->second.timeFirstTxPacket.GetSeconds();
-        double flowThroughput = i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000;
-
-        if (terrestrialgNBToAttachWithIndex[z] != -1) // Only consider terrestrial UEs
-        {
-            terrestrialLinkThroughput[terrestrialgNBToAttachWithIndex[z]] += flowThroughput;
-        }
-    }
-    z++;
-}
-
-for (uint32_t l = 0; l < numTerrestrialGNBs; l++)
-{
-    performanceResultsFile << terrestrialLinkThroughput[l] << " ";
-}
-performanceResultsFile << "\n";
-
-performanceResultsFile << "Average aggregated throughput for terrestrial network [Mbps]\n";
-double averageTerrestrialThroughput = 0;
-for (uint32_t l = 0; l < numTerrestrialGNBs; l++)
-{
-    averageTerrestrialThroughput += terrestrialLinkThroughput[l];
-}
-performanceResultsFile << (averageTerrestrialThroughput / numTerrestrialGNBs) << "\n";
-
-// Add terrestrial cell occupancy metrics
-performanceResultsFile << "Cell occupancy per terrestrial gNB per carrier\n";
-uint32_t cellOccupancyMatrixTerrestrial[numTrafficProfile][numTerrestrialGNBs], cellOccupancyPerTerrestrialGNB[numTerrestrialGNBs];
-for (uint32_t i = 0; i < numTerrestrialGNBs; i++)
-{
-    for (uint32_t j = 0; j < numTrafficProfile; j++)
-        cellOccupancyMatrixTerrestrial[j][i] = 0;
-    cellOccupancyPerTerrestrialGNB[i] = 0;
-}
-
-for (uint32_t k = 0; k < numTotalUE; k++)
-{
-    if (terrestrialgNBToAttachWithIndex[k] != -1) // Only consider terrestrial UEs
-    {
-        cellOccupancyMatrixTerrestrial[UETrafficProfileIndex[k]][terrestrialgNBToAttachWithIndex[k]] += numDevicesPerUE[k];
-    }
-}
-
-for (uint32_t j = 0; j < numTrafficProfile; j++)
-{
-    for (uint32_t i = 0; i < numTerrestrialGNBs; i++)
-    {
-        performanceResultsFile << cellOccupancyMatrixTerrestrial[j][i] << " ";
-        cellOccupancyPerTerrestrialGNB[i] += cellOccupancyMatrixTerrestrial[j][i];
-    }
-    performanceResultsFile << "\n";
-}
-
-performanceResultsFile << "Cell occupancy per terrestrial gNB\n";
-for (uint32_t i = 0; i < numTerrestrialGNBs; i++)
-{
-    performanceResultsFile << cellOccupancyPerTerrestrialGNB[i] << " ";
-}
-performanceResultsFile << "\n";
-
-*/
-
-
   performanceResultsFile.close ();
   ifstream perResIn(performanceResultsFileName.c_str(), ios::binary);
   string performanceResultsFileNamePerRound = outputPath + "performanceResults_" + to_string(simRoundIndex) + ".txt";

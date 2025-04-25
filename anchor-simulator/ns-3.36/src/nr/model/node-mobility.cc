@@ -4,7 +4,7 @@
 #include "sgp4ext.h"
 #include "sgp4unit.h"
 #include "sgp4io.h"
-
+#include "ns3/netanim-module.h"
 
 using namespace std;
 namespace ns3 {
@@ -124,7 +124,7 @@ void CalculateUEPosition(uint32_t ueTotalNum, uint32_t simulationDurationS, Node
 /*
  * Set the position of all gNBs at the time currentTime
  */
-/** 
+
 void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositions gNBPositions[]) {
   for (uint32_t i = 0; i < gNbContainer.GetN(); i++)
 	{
@@ -133,9 +133,9 @@ void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositi
 	}
   Simulator::Schedule(Seconds(1.0), SetgNBPosition, gNbContainer, ++currentTime, gNBPositions);
 }
-*/
 
 
+/** 
 void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositions* gNBPositions) {
     for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
         Ptr<MobilityModel> gNbMobility = gNbContainer.Get(i)->GetObject<MobilityModel>();
@@ -146,14 +146,16 @@ void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositi
     Simulator::Schedule(Seconds(1.0), &SetgNBPosition, gNbContainer, ++currentTime, gNBPositions);
 }
 
-
+*/
 
 
 
 /*
  * Set the position of all UEs at the time currentTime
  */
-void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePositions uePositions[]) {
+
+
+ void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePositions uePositions[]) {
 	for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++)
 	  {
 		Ptr<MobilityModel> ueMobility = ueGlobalContainer.Get(i)->GetObject<MobilityModel> ();
@@ -162,4 +164,36 @@ void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePo
 	Simulator::Schedule(Seconds(1.0), SetUEPosition, ueGlobalContainer, ++currentTime, uePositions);
 }
 
+
+/** 
+
+void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePositions* uePositions) {
+	for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++)
+	  {
+		Ptr<MobilityModel> ueMobility = ueGlobalContainer.Get(i)->GetObject<MobilityModel> ();
+		ueMobility->SetPosition(Vector(uePositions[i].coordinates[currentTime][0], uePositions[i].coordinates[currentTime][1], uePositions[i].coordinates[currentTime][2]));
+	  }
+	Simulator::Schedule(Seconds(1.0), SetUEPosition, ueGlobalContainer, ++currentTime, uePositions);
+}
+
+*/
+
+
+
+/** 
+
+void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePositions uePositions[], AnimationInterface* anim) {
+    for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
+        Ptr<MobilityModel> ueMobility = ueGlobalContainer.Get(i)->GetObject<MobilityModel>();
+        Vector newPosition(uePositions[i].coordinates[currentTime][0], 
+                           uePositions[i].coordinates[currentTime][1], 
+                           uePositions[i].coordinates[currentTime][2]);
+        ueMobility->SetPosition(newPosition);
+
+        // Notify NetAnim of the new position
+        anim->SetConstantPosition(ueGlobalContainer.Get(i), newPosition.x, newPosition.y);
+    }
+    Simulator::Schedule(Seconds(1.0), &SetUEPosition, ueGlobalContainer, ++currentTime, uePositions, anim);
+}
+*/
 }
