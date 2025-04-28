@@ -1,0 +1,96 @@
+# 📦 Required Libraries
+import xml.etree.ElementTree as ET
+import plotly.graph_objects as go
+
+# 📄 Step 1: Load the XML file
+xml_file = '/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/simulation-output.xml'  # change if your file name is different
+tree = ET.parse(xml_file)
+root = tree.getroot()
+
+# 📚 Step 2: Containers to store node and packet information
+node_positions = {}
+packet_flows = []
+
+# 📥 Step 3: Parse nodes (initial positions)
+for node in root.findall('node'):
+    node_id = int(node.get('id'))
+    x = float(node.get('x'))
+    y = float(node.get('y'))
+
+    # Assign z-coordinate
+    # Example: Satellites (id < 10) have high Z, others are terrestrial
+    if node_id < 10:
+        z = 500  # Satellite altitude (units can be meters, km, etc.)
+    else:
+        z = 0    # Ground level
+
+    node_positions[node_id] = (x, y, z)
+
+# 📦 Step 4: Parse packet transmissions (optional)
+for packet in root.findall('addPacket'):
+    src = int(packet.get('source'))
+    dst = int(packet.get('destination'))
+    size = int(packet.get('size'))  # Size not used in visualization for now
+    packet_flows.append((src, dst))
+
+# 📊 Step 5: Prepare data for Plotly 3D plot
+node_x = []
+node_y = []
+node_z = []
+node_labels = []
+
+for node_id, (x, y, z) in node_positions.items():
+    node_x.append(x)
+    node_y.append(y)
+    node_z.append(z)
+    node_labels.append(f"Node {node_id}")
+
+# Create 3D scatter plot for nodes
+node_trace = go.Scatter3d(
+    x=node_x,
+    y=node_y,
+    z=node_z,
+    mode='markers+text',
+    marker=dict(
+        size=6,
+        color='blue',
+    ),
+    text=node_labels,
+    textposition="top center",
+    name='Nodes'
+)
+
+# 📡 Step 6: Draw packet flows as lines between nodes
+packet_traces = []
+for src, dst in packet_flows:
+    if src in node_positions and dst in node_positions:
+        src_pos = node_positions[src]
+        dst_pos = node_positions[dst]
+        
+        packet_traces.append(go.Scatter3d(
+            x=[src_pos[0], dst_pos[0]],
+            y=[src_pos[1], dst_pos[1]],
+            z=[src_pos[2], dst_pos[2]],
+            mode='lines',
+            line=dict(color='red', width=2),
+            opacity=0.5,
+            showlegend=False
+        ))
+
+# 📈 Step 7: Combine all traces and create figure
+fig = go.Figure(data=[node_trace] + packet_traces)
+
+fig.update_layout(
+    title="3D Network Visualization from NetAnim XML",
+    scene=dict(
+        xaxis_title='X Position',
+        yaxis_title='Y Position',
+        zaxis_title='Altitude (Z)',
+        aspectmode='data'  # keep aspect ratio correct
+    ),
+    margin=dict(l=0, r=0, b=0, t=30)
+)
+
+# 📷 Step 8: Show the plot
+fig.show()
+

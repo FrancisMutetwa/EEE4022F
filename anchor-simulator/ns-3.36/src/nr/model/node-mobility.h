@@ -15,8 +15,8 @@ namespace ns3 {
 	const double MASS_EARTH = 5.9736e24;			                                        // mass of the Earth [kg]
 	const double GRAVITATIONAL_CONST = 6.673e-11;			                                // gravity constant [N*m^2/kg^2]
 	// paths where to find the input files and where to store the created output files
-	const string inputPath = "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/Input/trial2/";	
-	const string outputPath = "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/Output/trial2Output/";
+	const string inputPath = "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/Input/trial1/";	
+	const string outputPath = "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/Output/trial1Output/";
 
 	struct NodePositions
 	{

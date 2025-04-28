@@ -1051,7 +1051,7 @@ for (uint32_t i = 0; i < numTotalUE; i++)
       exit(1);
     }
   trafficFlowFile.close();
-  // epcHelper->AddX2Interface (gNbContainer.Get(0), gNbContainer.Get(1));	// to enable in case of inter-satellite links
+   epcHelper->AddX2Interface (gNbContainer.Get(0), gNbContainer.Get(1));	// to enable in case of inter-satellite links
 
   // start server and client apps
   serverApps.Start(MilliSeconds(200.0));
@@ -1075,21 +1075,8 @@ for (uint32_t i = 0; i < numTotalUE; i++)
   monitor->SetAttribute ("PacketSizeBinWidth", DoubleValue (20));
    
 
-  
-
-
-  
-
-
-
   // execute simulation
   Simulator::Stop (MilliSeconds (simRoundDurationMs));
- 
- 
- 
- 
-
-
   cout << "End Simulation preparation\n";
   cout << "\n";
   cout << "Start Simulation\n";
@@ -1098,27 +1085,6 @@ for (uint32_t i = 0; i < numTotalUE; i++)
   logFile << "Start Simulation\n";
   logFile.close();
   PrintSimulationStatus(simRoundDurationS);
-
-  /** 
-  Ptr<Node> node5 = NodeList::GetNode(5);
-
-  if (node5->GetNDevices() > 0) {
-      std::cout << "[DEBUG] Node 5 Type: "
-                << node5->GetDevice(0)->GetInstanceTypeId().GetName()
-                << std::endl;
-  } else {
-      std::cout << "[DEBUG] Node 5 has no devices." << std::endl;
-  }
-
-  */
-
-//anim.EnableOutput(false);  // Optional: disables animation output if you want to go minimal
-
-
-
-
-
-
 
   // Set up NetAnim
 AnimationInterface anim("simulation-output.xml"); // Output file for NetAnim
@@ -1139,6 +1105,9 @@ for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
     anim.UpdateNodeColor(ueGlobalContainer.Get(i), 0, 0, 255); // Blue for UEs
 }
 
+Packet::EnablePrinting();
+PacketMetadata::Enable();
+anim.EnablePacketMetadata(true);
 
 
 
@@ -1277,75 +1246,6 @@ anim.EnablePacketMetadata(true);
 
 
   Simulator::Run ();
-/** 
-
-  // Classify flows based on gNB type
-Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmonHelper.GetClassifier());
-FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats();
-
-FlowMonitor::FlowStatsContainer satelliteStats, terrestrialStats;
-for (auto it = stats.begin(); it != stats.end(); ++it)
-{
-    Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(it->first);
-
-    // Debug: Print flow details
-    std::cout << "Flow ID: " << it->first << ", Source: " << t.sourceAddress
-              << ", Destination: " << t.destinationAddress << "\n";
-
-    // Check if the flow is associated with a satellite gNB
-    bool isSatelliteFlow = false;
-    for (uint32_t j = 0; j < gNbContainer.GetN(); j++)
-    {
-        Ptr<Ipv4> gnbIpv4 = gNbContainer.Get(j)->GetObject<Ipv4>();
-        if (t.sourceAddress == gnbIpv4->GetAddress(1, 0).GetLocal() || 
-            t.destinationAddress == gnbIpv4->GetAddress(1, 0).GetLocal())
-        {
-            isSatelliteFlow = true;
-            break;
-        }
-    }
-
-    // Check if the flow is associated with a terrestrial gNB
-    bool isTerrestrialFlow = false;
-    for (uint32_t j = 0; j < terrestrialGnbContainer.GetN(); j++)
-    {
-        Ptr<Ipv4> gnbIpv4 = terrestrialGnbContainer.Get(j)->GetObject<Ipv4>();
-        if (t.sourceAddress == gnbIpv4->GetAddress(1, 0).GetLocal() || 
-            t.destinationAddress == gnbIpv4->GetAddress(1, 0).GetLocal())
-        {
-            isTerrestrialFlow = true;
-            break;
-        }
-    }
-
-    // Add the flow to the appropriate container
-    if (isSatelliteFlow)
-    {
-        satelliteStats.insert(*it);
-        std::cout << "Classified as Satellite Flow\n";
-    }
-    else if (isTerrestrialFlow)
-    {
-        terrestrialStats.insert(*it);
-        std::cout << "Classified as Terrestrial Flow\n";
-    }
-    else
-    {
-        std::cout << "Flow not classified\n";
-    }
-}
-
-*/
-
-
-
-
-
-
-
-
-
-
 
   logFile.open(logFileName.str().c_str(), ofstream::app);
   logFile << "Simulation progress: " << simRoundDurationS << " 100%\n";
@@ -1423,14 +1323,32 @@ for (auto it = stats.begin(); it != stats.end(); ++it)
   ofstream dest(networkStatusFileNamePerRound.c_str(), ios::binary);
   dest << src.rdbuf();
 
+
+//Evaluating the network conditions to determine the best gNB to attach to for handover if required.
+
+
+
+
+
+
+
+
+
+
+
+
   // Count the number of satellite handovers
   int prevgNBToAttachWithIndex;
+  int prevTergNBToAttachWithIndex;
+  int totalHandovers = 0;
   uint32_t numberOfHandovers = 0;
+  uint32_t numberOfTerHandovers = 0;
   stringstream prevResAllFileName;
   prevResAllFileName << inputPath << "resourceAllocationPrevious.txt";
   ifstream prevResAllFile(prevResAllFileName.str().c_str());
   if (prevResAllFile)	// the current simulation round is not the first one
     {
+    prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
@@ -1441,10 +1359,25 @@ for (auto it = stats.begin(); it != stats.end(); ++it)
 			  prevResAllFile >> keyword;
 		    }
 	    }
+    prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
 	  prevResAllFile >> keyword;
+     for (uint32_t a = 0; a < numTerrestrialGNBs; a++)
+    {
+        for (uint32_t b = 0; b <= numTrafficProfile; b++)
+        {
+            prevResAllFile >> keyword;
+        }
+    }
+     // Process satellite UE attachments
+    prevResAllFile >> keyword;
+    prevResAllFile >> keyword;  // "satellite"
+    prevResAllFile >> keyword;  // "UE"
+    prevResAllFile >> keyword;  // "UEIndex"
+    prevResAllFile >> keyword;  // "UETrafficProfile"
+    prevResAllFile >> keyword;  // "gN
 	  for (uint32_t k = 0; k < numTotalUE; k++)
 	    {
 		  prevResAllFile >> keyword;
@@ -1453,6 +1386,23 @@ for (auto it = stats.begin(); it != stats.end(); ++it)
 		  if (prevgNBToAttachWithIndex != gNBToAttachWithIndex[k])
 			  numberOfHandovers++;
 	    }
+     // Process terrestrial UE attachments
+    prevResAllFile >> keyword;
+    prevResAllFile >> keyword;  // "terrestrial"
+    prevResAllFile >> keyword;  // "UE"
+    prevResAllFile >> keyword;  // "UEIndex"
+    prevResAllFile >> keyword;  // "UETrafficProfile"
+    prevResAllFile >> keyword;  // "gNBIndexToAttach"
+
+    for (uint32_t y = 0; y < numTotalUE; y++)
+    {
+        prevResAllFile >> keyword;  // UE index
+        prevResAllFile >> keyword;  // Traffic profile
+        prevResAllFile >> prevTergNBToAttachWithIndex;
+        if (prevTergNBToAttachWithIndex != terrestrialgNBToAttachWithIndex[y])
+            numberOfTerHandovers++;
+    }
+    totalHandovers = numberOfHandovers + numberOfTerHandovers;
     }
 
   // Creation of the performance results output text file
@@ -1550,8 +1500,16 @@ for (auto it = stats.begin(); it != stats.end(); ++it)
   for (uint32_t i = 0; i < numgNB; i++)
 	  performanceResultsFile << cellOccupancyPerSat[i] << " ";
   performanceResultsFile << "\n";
-  performanceResultsFile << "Number of handovers\n";
-  performanceResultsFile << numberOfHandovers;
+  //performanceResultsFile << "Number of handovers\n";
+  //performanceResultsFile << numberOfHandovers;
+  // Update the performance results file to include both types of handovers
+  performanceResultsFile << "Number of satellite handovers\n";
+  performanceResultsFile << numberOfHandovers << "\n";
+  performanceResultsFile << "Number of terrestrial handovers\n";
+  performanceResultsFile << numberOfTerHandovers << "\n";
+  performanceResultsFile << "Total number of handovers\n";
+  performanceResultsFile << totalHandovers << "\n";
+
   performanceResultsFile.close ();
   ifstream perResIn(performanceResultsFileName.c_str(), ios::binary);
   string performanceResultsFileNamePerRound = outputPath + "performanceResults_" + to_string(simRoundIndex) + ".txt";

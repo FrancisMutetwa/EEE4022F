@@ -2242,3 +2242,123 @@
 64	78	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
 138	188	1745589816787287777	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
 188	907	1745589817501292578	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+76	94	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+144	242	1745609800443664204	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+242	1977	1745609802169820440	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+51	59	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+105	11547	1745610115902366663	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+11547	12147	1745610116527241762	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+47	56	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+92	13237	1745610179599348529	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+13237	13989	1745610180419227561	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+115	134	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+202	236	1745657575231158258	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+237	2584	1745657577561966989	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+203	19657	1745657594541505493	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+19657	20497	1745657595484421170	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+129	153	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+237	18705	1745658316241612152	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+18706	19530	1745658317128611302	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+105	120	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+182	18306	1745658670396414927	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+18307	19114	1745658671277370817	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+84	99	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+81	95	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+97	120	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+198	18632	1745659222489484104	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+18632	19373	1745659223289473852	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+85	100	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+161	18250	1745659290636650725	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+18250	19035	1745659291537640202	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+117	140	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+204	18129	1745777619896072141	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+18129	18961	1745777620791085384	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+101	115	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+86	100	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+98	116	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+117	138	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+212	5280	1745780534936578284	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+5280	8128	1745780537787002614	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+213	23614	1745780553229161740	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+23617	24392	1745780554065524095	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+91	115	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+171	3256	1745846132476531559	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+3256	5346	1745846134574766300	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+171	13154	1745846142343239274	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+13154	13747	1745846142983602010	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+85	97	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+42	51	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	52	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+97	156	1745846494902548014	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+156	1934	1745846496672432545	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+97	11883	1745846506590389220	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+11883	12498	1745846507242715231	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+45	68	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	54	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	52	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+45	54	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+80	93	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+48	58	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+84	11717	1745849492845088154	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+11717	12480	1745849493639115489	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+67	76	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+46	54	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+65	76	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+61	74	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+128	14464	1745850465082241208	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+14465	15215	1745850465930266259	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+54	67	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+69	81	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+124	11790	1745850781751475486	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+11790	12519	1745850782527365631	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+55	64	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+108	11583	1745850863873407306	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+11583	12153	1745850864480343465	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+55	68	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+110	13475	1745850920113036884	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+13475	14266	1745850920959963861	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+74	85	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+130	11885	1745850995274323037	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+11886	12552	1745850995991275276	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+64	80	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+125	13598	1745851245558854111	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+13598	14452	1745851246499825212	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+121	143	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+181	247	1745851499233057798	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+247	827	1745851499815047815	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+42	51	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+55	64	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+78	90	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	52	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+52	61	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+114	224	1745852431262548359	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+224	799	1745852431836584326	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+52	73	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+45	54	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	53	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+79	90	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+43	52	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+44	55	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+98	177	1745853310664229460	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+177	2425	1745853312906649064	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+98	13179	1745853323623617508	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+13179	13871	1745853324358750352	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+70	89	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+89	104	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+153	12129	1745855750793658780	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+12129	12882	1745855751622665227	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+73	88	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+163	12501	1745862640282008510	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+12501	13297	1745862641131013243	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
+54	63	0	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/cmake-cache/CMakeFiles/cmake.verify_globs	d59c870ec87bbfeb
+111	135	1745862674449197695	src/nr/CMakeFiles/libnr-obj.dir/model/node-mobility.cc.o	bf089deece51f57b
+136	2083	1745862676391208370	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/lib/libns3.36-nr-default.so	64dbc44979174fea
+111	12454	1745862686736265099	src/nr/examples/CMakeFiles/ran-simulator.dir/ran-simulator.cc.o	640817017bb7043d
+12454	13092	1745862687406268765	/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/build/src/nr/examples/ns3.36-ran-simulator-default	e6a11491d71de914
