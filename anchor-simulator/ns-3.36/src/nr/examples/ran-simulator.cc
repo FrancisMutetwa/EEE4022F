@@ -802,93 +802,12 @@ for (auto it = ueNetDevContainers[i].Begin(); it != ueNetDevContainers[i].End();
   	    }
  	}
 
-  //UE attachment to satellite gNBs
-  /** 
-  for (uint32_t i = 0; i < numTotalUE; i++)
-    {
-	  if (gNBToAttachWithIndex[i] != -1)	// if == -1, no possible gNB candidates
-	    {
-		  uint32_t gNBIndexChosen = 0, gNBIndex = gNBToAttachWithIndex[i];
-		  for (uint32_t j = 0; j < numgNB; j++)
-		    {
-			  if (activegNB[j])
-			    {
-				  if (gNBIndex == j)
-					  break;
-				  gNBIndexChosen++;
-			    }
-		     }
-		  nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), gnbNetDevContainer.Get(gNBIndexChosen), UETrafficProfileIndex[i]);
-      std::cout << "✅ UE " << i << " successfully attached to Satellite gNB " << gNBIndexChosen << "\n";
-	    }
-    }
-   
-
-*/
-
-/**  
-for (uint32_t i = 0; i < numTotalUE; i++)
-{
-    if (gNBToAttachWithIndex[i] != -1) // Attach to satellite gNB
-    {
-        uint32_t gNBIndexChosen = 0, gNBIndex = gNBToAttachWithIndex[i];
-        for (uint32_t j = 0; j < numgNB; j++)
-        {
-            if (activegNB[j])
-            {
-                if (gNBIndex == j)
-                    break;
-                gNBIndexChosen++;
-            }
-        }
-        nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), gnbNetDevContainer.Get(gNBIndexChosen), UETrafficProfileIndex[i]);
-        std::cout << "✅ UE " << i << " successfully attached to Satellite gNB " << gNBIndexChosen << "\n";
-      }
-    else //(terrestrialgNBToAttachWithIndex[i] != -1) // Attach to terrestrial gNB
-    {
-        uint32_t gNBIndexChosen = 0, gNBIndex = terrestrialgNBToAttachWithIndex[i];
-        for (uint32_t j = 0; j < numTerrestrialGNBs; j++)
-        {
-            if (activeTerrestrialGNB[j])
-            {
-                if (gNBIndex == j)
-                    break;
-                gNBIndexChosen++;
-            }
-        }
-        nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), terrestrialGnbNetDevContainer.Get(gNBIndexChosen), UETrafficProfileIndex[i]);
-        std::cout << "✅ UE " << i << " successfully attached to Terrestrial gNB " << gNBIndexChosen << "\n";
-      }
-}
-*/
-
-
-//testing UEs attachment to terrestrial UE'S
-
- /** 
-for (uint32_t i = 0; i < numTotalUE; i++)
-{
-  if (terrestrialgNBToAttachWithIndex[i] != -1) // Attach to terrestrial gNB
-    {
-        uint32_t gNBIndexChosen = 0, gNBIndex = terrestrialgNBToAttachWithIndex[i];
-        for (uint32_t j = 0; j < numTerrestrialGNBs; j++)
-        {
-            if (activeTerrestrialGNB[j])
-            {
-                if (gNBIndex == j)
-                    break;
-                gNBIndexChosen++;
-            }
-        }
-        nrHelper->AttachToEnb(ueNetDevGlobalContainer.Get(i), terrestrialGnbNetDevContainer.Get(gNBIndexChosen), UETrafficProfileIndex[i]);
-        std::cout << "✅ UE " << i << " successfully attached to Terrestrial gNB " << gNBIndexChosen << "\n";
-    }
-}  
-*/
-
-// Define threshold values for satellite and terrestrial gNBs
-const double SATELLITE_THRESHOLD = 1200000.0; // Example: 1200 km
-const double TERRESTRIAL_THRESHOLD = 1000.0;  // Example: 1 km
+  
+// The code block below attaches each UE to the closest gNB (either satellite or terrestrial) based on distance. Other criteria
+// will be added to better assign a UE to a particular gNB.
+// Defining threshold values for satellite and terrestrial gNBs
+const double SATELLITE_THRESHOLD = 1200000.0; // 1200 km satellite distance gnb from UE threshold
+const double TERRESTRIAL_THRESHOLD = 1000.0;  // 1 km terrestrial distance gnb from UE threshold
 
 for (uint32_t i = 0; i < numTotalUE; i++)
 {
@@ -1110,141 +1029,6 @@ PacketMetadata::Enable();
 anim.EnablePacketMetadata(true);
 
 
-
-
-
-
-/** 
-// Set node positions (optional, if mobility is not already handled)
-for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
-    Vector pos = gNbContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-    //anim.SetConstantPosition(gNbContainer.Get(i), pos.x, pos.y);
-}
-
-for (uint32_t i = 0; i < terrestrialGnbContainer.GetN(); i++) {
-    Vector pos = terrestrialGnbContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-    anim.SetConstantPosition(terrestrialGnbContainer.Get(i), pos.x, pos.y);
-}
-
-for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
-    Vector pos = ueGlobalContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-    //anim.SetConstantPosition(ueGlobalContainer.Get(i), pos.x, pos.y);
-}
-*/
-
-
-
-
-  
-/** 
-Simulator::Schedule(Seconds(1.0), [=]() {
-  Ptr<Node> ue = ueGlobalContainer.Get(0);               // UE 0
-  Ptr<Node> satelliteGnb = gNbContainer.Get(0);          // Satellite gNB 0
-
-  Vector uePos = ue->GetObject<MobilityModel>()->GetPosition();
-  Vector gnbPos = satelliteGnb->GetObject<MobilityModel>()->GetPosition();
-
-  double distance = sqrt(pow(uePos.x - gnbPos.x, 2) +
-                         pow(uePos.y - gnbPos.y, 2) +
-                         pow(uePos.z - gnbPos.z, 2));
-
-  if (distance < 1200000.0) // within 1200 km
-  {
-      // Simulate handover event — but DON'T call AttachToEnb()
-      std::cout << "[Simulated Handover] UE 0 WOULD switch to Satellite gNB 0 at distance "
-                << distance / 1000.0 << " km | Time: "
-                << Simulator::Now().GetSeconds() << "s\n";
-
-      // Optional: update UE description or color in NetAnim
-      //AnimationInterface anim("handover-output.xml");
-      //anim.UpdateNodeDescription(ue, "UE 0 (Handover Sim)");
-      //anim.UpdateNodeColor(ue, 0, 255, 0);  // Green for visibility
-  }
-  else
-  {
-      // Retry every second
-      Simulator::Schedule(Seconds(1.0), [=]() {
-          // Re-run the same block recursively
-      });
-  }
-});
-*/
-
-/** 
-// Tracks the last gNB each UE was "attached" to
-std::map<uint32_t, uint32_t> currentGnbMap;
-
-Simulator::Schedule(Seconds(1.0), [&anim, &ueGlobalContainer, &gNbContainer, &currentGnbMap]() {
-    for (uint32_t i = 0; i < ueGlobalContainer.GetN(); ++i)
-    {
-        Ptr<Node> ue = ueGlobalContainer.Get(i);
-        Vector uePos = ue->GetObject<MobilityModel>()->GetPosition();
-
-        double minDistance = std::numeric_limits<double>::max();
-        uint32_t bestGnbIndex = -1;
-
-        // Give each UE its own slightly randomized handover threshold
-        double ueThreshold = 1200000.0 + (rand() % 100000);  // 1200–1300 km
-
-        for (uint32_t j = 0; j < gNbContainer.GetN(); ++j)
-        {
-            Ptr<Node> gnb = gNbContainer.Get(j);
-            Vector gnbPos = gnb->GetObject<MobilityModel>()->GetPosition();
-
-            double distance = sqrt(pow(uePos.x - gnbPos.x, 2) +
-                                   pow(uePos.y - gnbPos.y, 2) +
-                                   pow(uePos.z - gnbPos.z, 2));
-
-            if (distance < ueThreshold && distance < minDistance)
-            {
-                minDistance = distance;
-                bestGnbIndex = j;
-            }
-        }
-
-        // Only simulate handover if UE has a new best gNB
-        if (bestGnbIndex != -1 && currentGnbMap[i] != bestGnbIndex)
-        {
-            std::cout << "[Simulated Handover] UE " << i
-                      << " switches to Satellite gNB " << bestGnbIndex
-                      << " at distance " << minDistance / 1000.0 << " km | Time: "
-                      << Simulator::Now().GetSeconds() << "s\n";
-
-            // Update visualization only when gNB changes
-            anim.UpdateNodeDescription(ue, "UE " + std::to_string(i) + " -> gNB " + std::to_string(bestGnbIndex));
-            anim.UpdateNodeColor(ue, 0, 255, 0);  // Green = handed over
-
-            currentGnbMap[i] = bestGnbIndex;
-        }
-    }
-
-    // Re-schedule the next evaluation in 1 second
-    Simulator::Schedule(Seconds(1.0), [&anim, &ueGlobalContainer, &gNbContainer, &currentGnbMap]() {
-        // Repeat same block recursively
-    });
-});
-
-
-
-
-
-Packet::EnablePrinting ();
-PacketMetadata::Enable ();
-anim.EnablePacketMetadata(true);
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
   Simulator::Run ();
 
   logFile.open(logFileName.str().c_str(), ofstream::app);
@@ -1325,12 +1109,148 @@ anim.EnablePacketMetadata(true);
 
 
 //Evaluating the network conditions to determine the best gNB to attach to for handover if required.
+// Open the previous resource allocation file for reading
+std::ifstream prevResourceFile("resourceAllocationPrevious.txt");
+if (!prevResourceFile.is_open())
+{
+    std::cerr << "Error: Unable to open previous resource allocation file for reading!\n";
+    return 1;
+}
 
+// Open the new resource allocation file for writing
+std::ofstream resourceFile("resourceAllocation.txt", std::ofstream::out | std::ofstream::trunc);
+if (!resourceFile.is_open())
+{
+    std::cerr << "Error: Unable to open resource allocation file for writing!\n";
+    return 1;
+}
 
+std::string line;
+bool isSatelliteGnbBlock = false;
+bool isTerrestrialGnbBlock = false;
 
+// Copy the satellite and terrestrial gNB blocks
+while (std::getline(prevResourceFile, line))
+{
+    if (line == "satellite")
+    {
+        isSatelliteGnbBlock = true;
+        isTerrestrialGnbBlock = false;
+        resourceFile << line << "\n"; // Write the "satellite" header
+        continue;
+    }
+    else if (line == "terrestrial")
+    {
+        isSatelliteGnbBlock = false;
+        isTerrestrialGnbBlock = true;
+        resourceFile << line << "\n"; // Write the "terrestrial" header
+        continue;
+    }
 
+    if (isSatelliteGnbBlock || isTerrestrialGnbBlock)
+    {
+        resourceFile << line << "\n"; // Write the gNB block lines
+    }
 
+    // Stop copying when reaching the UE block
+    if (line == "UE UEIndex UETrafficProfile gNBIndexToAttach")
+    {
+        break;
+    }
+}
 
+// Write the header for the satellite UE block
+//resourceFile << "satellite\n";
+//resourceFile << "UE UEIndex UETrafficProfile gNBIndexToAttach\n";
+// Iterate over all UEs in the network to update the satellite UE block
+for (uint32_t i = 0; i < numTotalUE; i++)
+{
+    double minDistance = std::numeric_limits<double>::max();
+    uint32_t closestGNBIndex = -1;
+    bool isSatellite = false;
+
+    // Get the position of the current UE
+    Vector uePosition = ueGlobalContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
+
+    // Check satellite gNBs
+    for (uint32_t j = 0; j < numgNB; j++)
+    {
+        if (activegNB[j]) // Only consider active satellite gNBs
+        {
+            Vector gnbPosition = gNbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
+            double distance = CalculateDistance(uePosition, gnbPosition);
+
+            if (distance < minDistance && distance <= SATELLITE_THRESHOLD)
+            {
+                minDistance = distance;
+                closestGNBIndex = j;
+                isSatellite = true;
+            }
+        }
+    }
+
+    // Write the result to the resource file
+    if (closestGNBIndex != -1 && isSatellite)
+    {
+        resourceFile << i << " " << UETrafficProfileIndex[i] << " " << closestGNBIndex << "\n";
+        std::cout << "✅ UE " << i << " closest to Satellite gNB " << closestGNBIndex
+                  << " (Distance: " << minDistance / 1000.0 << " km)\n";
+    }
+    else
+    {
+        resourceFile << i << " " << UETrafficProfileIndex[i] << " -1\n"; // No suitable gNB found
+        std::cout << "❌ UE " << i << " could not find a suitable Satellite gNB within the threshold.\n";
+    }
+}
+resourceFile << "\n" ;
+// Write the header for the terrestrial UE block
+resourceFile << "terrestrial\n";
+resourceFile << "UE UEIndex UETrafficProfile gNBIndexToAttach\n";
+
+// Iterate again to write terrestrial UE attachments
+for (uint32_t i = 0; i < numTotalUE; i++)
+{
+    double minDistance = std::numeric_limits<double>::max();
+    uint32_t closestGNBIndex = -1;
+    bool isSatellite = false;
+
+    // Get the position of the current UE
+    Vector uePosition = ueGlobalContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
+
+    // Check terrestrial gNBs
+    for (uint32_t j = 0; j < numTerrestrialGNBs; j++)
+    {
+        if (activeTerrestrialGNB[j]) // Only consider active terrestrial gNBs
+        {
+            Vector gnbPosition = terrestrialGnbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
+            double distance = CalculateDistance(uePosition, gnbPosition);
+
+            if (distance < minDistance && distance <= TERRESTRIAL_THRESHOLD)
+            {
+                minDistance = distance;
+                closestGNBIndex = j;
+                isSatellite = false;
+            }
+        }
+    }
+
+    // Write the result to the resource file
+    if (closestGNBIndex != -1 && !isSatellite)
+    {
+        resourceFile << i << " " << UETrafficProfileIndex[i] << " " << closestGNBIndex << "\n";
+        std::cout << "✅ UE " << i << " closest to Terrestrial gNB " << closestGNBIndex
+                  << " (Distance: " << minDistance / 1000.0 << " km)\n";
+    }
+    else
+    {
+        resourceFile << i << " " << UETrafficProfileIndex[i] << " -1\n"; // No suitable gNB found
+        std::cout << "❌ UE " << i << " could not find a suitable Terrestrial gNB within the threshold.\n";
+    }
+}
+
+prevResourceFile.close();
+resourceFile.close();
+std::cout << "✅ Resource allocation file updated successfully.\n";
 
 
 
