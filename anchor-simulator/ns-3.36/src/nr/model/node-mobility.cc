@@ -135,18 +135,7 @@ void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositi
 }
 
 
-/** 
-void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositions* gNBPositions) {
-    for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
-        Ptr<MobilityModel> gNbMobility = gNbContainer.Get(i)->GetObject<MobilityModel>();
-        gNbMobility->SetPosition(Vector(gNBPositions[i].coordinates[currentTime][0],
-                                        gNBPositions[i].coordinates[currentTime][1],
-                                        gNBPositions[i].coordinates[currentTime][2]));
-    }
-    Simulator::Schedule(Seconds(1.0), &SetgNBPosition, gNbContainer, ++currentTime, gNBPositions);
-}
 
-*/
 
 
 
@@ -164,36 +153,70 @@ void SetgNBPosition(NodeContainer gNbContainer, uint32_t currentTime, NodePositi
 	Simulator::Schedule(Seconds(1.0), SetUEPosition, ueGlobalContainer, ++currentTime, uePositions);
 }
 
-
-/** 
-
-void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePositions* uePositions) {
-	for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++)
-	  {
-		Ptr<MobilityModel> ueMobility = ueGlobalContainer.Get(i)->GetObject<MobilityModel> ();
-		ueMobility->SetPosition(Vector(uePositions[i].coordinates[currentTime][0], uePositions[i].coordinates[currentTime][1], uePositions[i].coordinates[currentTime][2]));
-	  }
-	Simulator::Schedule(Seconds(1.0), SetUEPosition, ueGlobalContainer, ++currentTime, uePositions);
-}
-
-*/
-
-
-
-/** 
-
-void SetUEPosition(NodeContainer ueGlobalContainer, uint32_t currentTime, NodePositions uePositions[], AnimationInterface* anim) {
-    for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
-        Ptr<MobilityModel> ueMobility = ueGlobalContainer.Get(i)->GetObject<MobilityModel>();
-        Vector newPosition(uePositions[i].coordinates[currentTime][0], 
-                           uePositions[i].coordinates[currentTime][1], 
-                           uePositions[i].coordinates[currentTime][2]);
-        ueMobility->SetPosition(newPosition);
-
-        // Notify NetAnim of the new position
-        anim->SetConstantPosition(ueGlobalContainer.Get(i), newPosition.x, newPosition.y);
+/*
+ * Calculate fixed positions for terrestrial gNBs
+ * The positions are read from a configuration file in LLA format and converted to ECI coordinates
+ * Similar to UE positions, these are fixed relative to satellites but account for Earth's rotation
+ */
+void CalculateTerrestrialGnbPosition(uint32_t numTerrestrialGNBs, uint32_t simulationDurationS, NodePositions terrestrialGnbPositions[]) {
+    // open the .txt file containing the terrestrial gNB coordinates
+    stringstream coordinateFileName;
+    coordinateFileName << inputPath << "terrestrialGnbCoordinates.txt";
+    // Write possible unexpected events in the log file
+    stringstream logFileName;
+    logFileName << outputPath << "logFile.txt";
+    ofstream logFile(logFileName.str().c_str(), ofstream::out);
+    ifstream coordinateFile(coordinateFileName.str().c_str());
+    if (!coordinateFile) {
+        cerr << "Terrestrial gNB coordinate file: Unable to open file!";
+        logFile << "Terrestrial gNB coordinate file: Unable to open file!";
+        exit(1);
     }
-    Simulator::Schedule(Seconds(1.0), &SetUEPosition, ueGlobalContainer, ++currentTime, uePositions, anim);
+
+    for (uint32_t i = 0; i < numTerrestrialGNBs; i++) {
+        terrestrialGnbPositions[i].nodeIndex = i;
+        double latitude, longitude, altitude;
+        // using WGS84 orbit model, the equatorial radius and the polar radius are 6378.137 km and 6356.755 km respectively
+        double equatorialRadius = 6378.137, polarRadius = 6356.755;
+        coordinateFile >> latitude >> longitude >> altitude;        // latitude and longitude in degrees, altitude in m
+        // convert latitude and longitude in radians
+        latitude = latitude * M_PI / 180;
+        longitude = longitude * M_PI / 180;
+        altitude = altitude / 1000;        // convert altitude in km
+        // calculate Earth radius at the ground station position and geocentric latitude
+        double geocentricLatitude = atan((polarRadius / equatorialRadius) * tan(latitude));
+        double earthRadius = altitude + ((equatorialRadius * polarRadius) / sqrt(pow(equatorialRadius * sin(geocentricLatitude),2) + pow(polarRadius * cos(geocentricLatitude),2)));
+        
+        // Store the positions for each time step, accounting for Earth's rotation
+        terrestrialGnbPositions[i].time = new int[simulationDurationS];
+        terrestrialGnbPositions[i].coordinates = new double*[simulationDurationS];
+        
+        // Calculate ECI coordinates for each time step, updating longitude for Earth's rotation
+        for (uint32_t j = 0; j <= simulationDurationS; j++) {
+            terrestrialGnbPositions[i].coordinates[j] = new double[3];
+            terrestrialGnbPositions[i].coordinates[j][0] = earthRadius * cos(longitude) * cos(geocentricLatitude);
+            terrestrialGnbPositions[i].coordinates[j][1] = earthRadius * sin(longitude) * cos(geocentricLatitude);
+            terrestrialGnbPositions[i].coordinates[j][2] = earthRadius * sin(geocentricLatitude);
+            longitude += (double)(2 * M_PI / 86400);  // Update longitude for Earth's rotation
+        }
+    }
+    
+    coordinateFile.close();
+    logFile.close();
 }
-*/
+
+/*
+ * Set the position of all terrestrial gNBs
+ */
+void SetTerrestrialGnbPosition(NodeContainer terrestrialGnbContainer, NodePositions terrestrialGnbPositions[]) {
+    for (uint32_t i = 0; i < terrestrialGnbContainer.GetN(); i++) {
+        Ptr<MobilityModel> terrestrialmobilityModel = terrestrialGnbContainer.Get(i)->GetObject<MobilityModel>();
+        Vector position(
+            terrestrialGnbPositions[i].coordinates[0][0],
+            terrestrialGnbPositions[i].coordinates[0][1],
+            terrestrialGnbPositions[i].coordinates[0][2]
+        );
+        terrestrialmobilityModel->SetPosition(position);
+    }
+}
 }
