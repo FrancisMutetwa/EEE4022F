@@ -1,22 +1,30 @@
 Average delivery time per traffic flow [ms]
-9.123113 9.031684 12.587530 12.464673 13.092877 12.880057 13.113977 13.110137 10.927184 10.967311 
+9.065613 9.099006 12.576279 12.464673 13.029117 12.987459 13.173577 8.261817 7.395063 7.390973 
 Average delivery time [ms]
-11.729854
+10.544358
 Jitter per traffic flow [ms]
-0.113750 0.002321 0.014978 0.011428 0.018112 0.188122 0.004800 0.012861 3.105659 3.842183 
+0.013928 0.136607 0.002500 0.011428 0.138496 0.039278 0.126389 0.000347 0.000035 0.000035 
 Average jitter [ms]
-0.731422
-Aggregated throughput per satellite channel [Mbps]
-8.512581 8.509911 1.794504 1.794506 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
-Average aggregated throughput [Mbps]
-2.061150
+0.046904
 Cell occupancy per satellite per carrier
-100 100 0 0 0 0 0 0 0 0 
-0 0 100 100 0 0 0 0 0 0 
-100 100 0 0 0 0 0 0 0 0 
-0 0 100 100 0 0 0 0 0 0 
-100 100 0 0 0 0 0 0 0 0 
+200 0 0 0 0 0 0 0 0 200 
+0 0 0 0 0 0 0 0 0 0 
+200 0 0 0 0 0 0 0 0 100 
+100 0 0 0 0 0 0 0 0 200 
+0 0 0 0 0 0 0 0 0 0 
 Cell occupancy per satellite
-300 300 200 200 0 0 0 0 0 0 
-Number of handovers
-0
+500 0 0 0 0 0 0 0 0 500 
+Aggregated throughput per satellite channel [Mbps]
+2.557570 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+Average satellite aggregated throughput [Mbps]
+0.255757
+Aggregated throughput per terrestrial channel [Mbps]
+8.409498 0.000000 1.611958 8.042660 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 
+Average terrestrial aggregated throughput [Mbps]
+1.806412
+Number of satellite handovers
+10
+Number of terrestrial handovers
+10
+Total number of handovers
+20

@@ -69,3 +69,21 @@ build_lib_example(
   SOURCE_FILES ${source_files}
   LIBRARIES_TO_LINK ${libraries_to_link}
 )
+
+set(nr-examples-sources
+  ran-simulator.cc
+  # ... other source files ...
+)
+
+build_example(
+  NAME ran-simulator
+  SOURCE_FILES ran-simulator.cc
+  LIBRARIES_TO_LINK ${libcore}
+                    ${libnetwork}
+                    ${libinternet}
+                    ${libapplications}
+                    ${libflow-monitor}
+                    ${libnr}
+                    ${libnetanim}
+                    jsoncpp
+)
