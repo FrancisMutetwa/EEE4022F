@@ -9,7 +9,6 @@
 using namespace std;
 namespace ns3 {
 
-
 /*
  * Calculate gNB (satellite) positions
  * The TLE of each satellite, written in a .txt file, is passed as input and used to calculate its ECI coordinates using the SGP4 orbit model one time per second for all simulation duration

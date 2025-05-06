@@ -1,5 +1,4 @@
 #include "ns3/core-module.h"
-#include "ns3/config-store.h"
 #include "ns3/network-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/internet-apps-module.h"
@@ -7,29 +6,25 @@
 #include "ns3/mobility-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/flow-monitor-module.h"
-#include <ns3/buildings-module.h>
 #include "ns3/nr-module.h"
 #include "ns3/antenna-module.h"
-#include "ns3/node-mobility.h"
 #include "ns3/lte-module.h"
 #include "ns3/socket.h"
 #include "ns3/udp-socket.h"
-#include <chrono>
 #include "ns3/log.h"
-#include <fstream>
 #include "ns3/netanim-module.h"
-#include <map>
-#include <limits>
-#include <cstdlib>
-#include <filesystem>
 #include "ns3/spectrum-value.h"
 #include "ns3/nr-spectrum-value-helper.h"
 #include "ns3/nr-phy-mac-common.h"
 #include "ns3/node-list.h"
 #include "ns3/node.h"
 #include "ns3/udp-client.h"
+
+#include <fstream>
+#include <map>
+#include <limits>
 #include <sstream>
-#include <jsoncpp/json/json.h>  // Fix the include path
+#include <jsoncpp/json/json.h>
 
 using namespace ns3;
 
@@ -40,8 +35,6 @@ void PrintSimulationStatus(uint32_t simulationDuration);
 // Add these near the top of the file after includes
 std::ofstream positionLogFile;
 std::string positionLogPath;
-std::ofstream eventLogFile;
-std::string eventLogPath;
 
 // Add this function before main()
 void LogNodePosition(uint32_t nodeId, Vector position) {
@@ -82,18 +75,6 @@ private:
 
 std::ofstream PositionLogger::m_file;
 
-// Add this function before main()
-void LogSimulationEvent(const std::string& eventType, const std::string& eventData) {
-    if (!eventLogFile.is_open()) {
-        eventLogFile.open("Output/trial1Output/simulation_events.csv", std::ios::out);
-        eventLogFile << "Time,EventType,Data\n";  // CSV header
-    }
-    
-    double currentTime = Simulator::Now().GetSeconds();
-    eventLogFile << currentTime << "," << eventType << "," << eventData << "\n";
-    eventLogFile.flush();
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -102,13 +83,13 @@ main (int argc, char *argv[])
   uint32_t simRoundDurationS = simRoundDurationMs / 1000;	// round duration in seconds
   uint32_t simDurationS = 600;	// simulation duration in seconds
   uint32_t simRoundIndex = 0;	// indicates the round Index
-  string spread = "rural";	// distribution of the UE in the area: uniform or random
+  string environment = "RMa_LoS";  // default environment type
   CommandLine cmd;
   // Allows including these variables in the simulation round launch command to set values different from the default ones
   cmd.AddValue ("simRoundDurationMs", "Simulation round duration in millisec", simRoundDurationMs);
   cmd.AddValue ("simDurationS", "Simulation duration in sec", simDurationS);
   cmd.AddValue ("simRoundIndex", "Index of the currently running round", simRoundIndex);
-  cmd.AddValue ("spread", "Distribution of the UE in the area: uniform or random", spread);
+  cmd.AddValue ("environment", "Environment type (RMa_LoS, UMa_LoS, UMi_StreetCanyon)", environment);
   cmd.Parse (argc, argv);
   // Create a log file to store possible errors occuring in runtime
   stringstream logFileName;
@@ -336,7 +317,10 @@ main (int argc, char *argv[])
               bwp->m_channelBandwidth = bandwidthBWPs[bwpIndex];
               bwp->m_lowerFrequency = bwp->m_centralFrequency - bwp->m_channelBandwidth / 2;
               bwp->m_higherFrequency = bwp->m_centralFrequency + bwp->m_channelBandwidth / 2;
-              bwp->m_scenario = BandwidthPartInfo::RMa_LoS;
+              bwp->m_scenario = environment == "RMa_LoS" ? BandwidthPartInfo::RMa_LoS :
+                               environment == "UMa_LoS" ? BandwidthPartInfo::UMa_LoS :
+                               environment == "UMi_StreetCanyon" ? BandwidthPartInfo::UMi_StreetCanyon :
+                               BandwidthPartInfo::RMa_LoS;  // default to RMa_LoS
               cc->AddBwp (move(bwp));
         	  bwpIndex++;
             }
@@ -407,7 +391,6 @@ main (int argc, char *argv[])
   nrHelper->SetChannelConditionModelAttribute ("UpdatePeriod", TimeValue (MilliSeconds (0)));
   nrHelper->SetPathlossAttribute ("ShadowingEnabled", BooleanValue (false));
   nrHelper->SetSchedulerTypeId (TypeId::LookupByName ("ns3::NrMacSchedulerTdmaRR"));
-
   //Essentially a calculated propagation delay between the Satellite gNB and the Core Network
   //uint32_t meanCoreLatency = floor(*maximumSatelliteAltitude + (*maximumContactDistance - *maximumSatelliteAltitude) / 2) / LIGHT_SPEED; // Core latency (between gNB e CN). Currently fixed as a mean value between the minimum contact distance (satellite altitude) and the maximum one()
   //epcHelper->SetAttribute ("S1uLinkDelay", TimeValue (MilliSeconds (meanCoreLatency)));
@@ -421,10 +404,9 @@ main (int argc, char *argv[])
     bool isTerrestrialGnb = terrestrialGnbContainer.Contains(terrestrialgnbNode->GetId());
     if (isSatelliteGnb) {
         uint32_t meanCoreLatency = floor(*maximumSatelliteAltitude + (*maximumContactDistance - *maximumSatelliteAltitude) / 2) / LIGHT_SPEED;
-        epcHelper->SetAttribute("S1uLinkDelay", TimeValue(MilliSeconds(meanCoreLatency)));}
+         epcHelper->SetAttribute("S1uLinkDelay", TimeValue(MilliSeconds(meanCoreLatency)));}
     else if (isTerrestrialGnb) {
         epcHelper->SetAttribute("S1uLinkDelay", TimeValue(MilliSeconds(terrestrialPropagationDelay)));
-        nrHelper->SetPathlossAttribute("Scenario", EnumValue(BandwidthPartInfo::UMi_StreetCanyon));
       }
 }
 
@@ -1116,7 +1098,10 @@ cout << "UE-gNB attachments done!\n";
     for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
       Ptr<MobilityModel> mobility = gNbContainer.Get(i)->GetObject<MobilityModel>();
       if (mobility) {
-        LogNodePosition(i, mobility->GetPosition());
+        Vector pos = mobility->GetPosition();
+        std::stringstream data;
+        data << gNbContainer.Get(i)->GetId() << "," << pos.x << "," << pos.y << "," << pos.z;
+        LogNodePosition(gNbContainer.Get(i)->GetId(), pos);
       }
     }
     
@@ -1124,7 +1109,10 @@ cout << "UE-gNB attachments done!\n";
     for (uint32_t i = 0; i < terrestrialGnbContainer.GetN(); i++) {
       Ptr<MobilityModel> mobility = terrestrialGnbContainer.Get(i)->GetObject<MobilityModel>();
       if (mobility) {
-        LogNodePosition(i + gNbContainer.GetN(), mobility->GetPosition());
+        Vector pos = mobility->GetPosition();
+        std::stringstream data;
+        data << terrestrialGnbContainer.Get(i)->GetId() << "," << pos.x << "," << pos.y << "," << pos.z;
+        LogNodePosition(terrestrialGnbContainer.Get(i)->GetId(), pos);
       }
     }
     
@@ -1133,7 +1121,10 @@ cout << "UE-gNB attachments done!\n";
       Ptr<MobilityModel> mobility = ueGlobalContainer.Get(i)->GetObject<MobilityModel>();
       if (mobility) {
         // Use a unique ID for UEs that doesn't overlap with gNBs
-        LogNodePosition(i + 1000, mobility->GetPosition());  // Start UE IDs from 1000
+        Vector pos = mobility->GetPosition();
+        std::stringstream data;
+        data << i + 1000 << "," << pos.x << "," << pos.y << "," << pos.z;
+        LogNodePosition(i + 1000, pos);  // Start UE IDs from 1000
       }
     }
   };
@@ -1153,23 +1144,15 @@ cout << "UE-gNB attachments done!\n";
     }
   });
 
-  // Initialize event logging
-  eventLogFile.open("Output/trial1Output/simulation_events.csv", std::ios::out);
-  eventLogFile << "Time,EventType,Data\n";  // CSV header
-
   // Log initial node positions
   for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
       Vector pos = gNbContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-      std::stringstream data;
-      data << "{\"nodeId\":" << i << ",\"nodeType\":\"satellite_gNB\",\"x\":" << pos.x << ",\"y\":" << pos.y << ",\"z\":" << pos.z << "}";
-      LogSimulationEvent("node_position", data.str());
+      LogNodePosition(i, pos);
   }
 
   for (uint32_t i = 0; i < terrestrialGnbContainer.GetN(); i++) {
       Vector pos = terrestrialGnbContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-      std::stringstream data;
-      data << "{\"nodeId\":" << i << ",\"nodeType\":\"terrestrial_gNB\",\"x\":" << pos.x << ",\"y\":" << pos.y << ",\"z\":" << pos.z << "}";
-      LogSimulationEvent("node_position", data.str());
+      LogNodePosition(i + gNbContainer.GetN(), pos);
   }
 
   for (uint32_t tpIndex = 0; tpIndex < numTrafficProfile; tpIndex++) {
@@ -1177,9 +1160,7 @@ cout << "UE-gNB attachments done!\n";
           Ptr<NetDevice> netDevice = ueNetDevContainers[tpIndex].Get(i);
           Ptr<Node> node = netDevice->GetNode();
           Vector pos = node->GetObject<MobilityModel>()->GetPosition();
-          std::stringstream data;
-          data << "{\"nodeId\":" << i << ",\"nodeType\":\"UE\",\"x\":" << pos.x << ",\"y\":" << pos.y << ",\"z\":" << pos.z << "}";
-          LogSimulationEvent("node_position", data.str());
+          LogNodePosition(i + 1000, pos);  // Start UE IDs from 1000
       }
   }
 
@@ -1187,16 +1168,12 @@ cout << "UE-gNB attachments done!\n";
   auto updatePositions = [&]() {
       for (uint32_t i = 0; i < gNbContainer.GetN(); i++) {
           Vector pos = gNbContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-          std::stringstream data;
-          data << "{\"nodeId\":" << i << ",\"nodeType\":\"satellite_gNB\",\"x\":" << pos.x << ",\"y\":" << pos.y << ",\"z\":" << pos.z << "}";
-          LogSimulationEvent("node_position", data.str());
+          LogNodePosition(i, pos);
       }
 
       for (uint32_t i = 0; i < terrestrialGnbContainer.GetN(); i++) {
           Vector pos = terrestrialGnbContainer.Get(i)->GetObject<MobilityModel>()->GetPosition();
-          std::stringstream data;
-          data << "{\"nodeId\":" << i << ",\"nodeType\":\"terrestrial_gNB\",\"x\":" << pos.x << ",\"y\":" << pos.y << ",\"z\":" << pos.z << "}";
-          LogSimulationEvent("node_position", data.str());
+          LogNodePosition(i + gNbContainer.GetN(), pos);
       }
 
       for (uint32_t tpIndex = 0; tpIndex < numTrafficProfile; tpIndex++) {
@@ -1204,9 +1181,7 @@ cout << "UE-gNB attachments done!\n";
               Ptr<NetDevice> netDevice = ueNetDevContainers[tpIndex].Get(i);
               Ptr<Node> node = netDevice->GetNode();
               Vector pos = node->GetObject<MobilityModel>()->GetPosition();
-              std::stringstream data;
-              data << "{\"nodeId\":" << i << ",\"nodeType\":\"UE\",\"x\":" << pos.x << ",\"y\":" << pos.y << ",\"z\":" << pos.z << "}";
-              LogSimulationEvent("node_position", data.str());
+              LogNodePosition(i + 1000, pos);  // Start UE IDs from 1000
           }
       }
   };
@@ -1223,9 +1198,7 @@ cout << "UE-gNB attachments done!\n";
       if (nrUeDevice) {
           uint64_t imsi = nrUeDevice->GetImsi();
           uint16_t cellId = nrUeDevice->GetCellId();
-          std::stringstream data;
-          data << "{\"ueId\":" << i << ",\"cellId\":" << cellId << ",\"imsi\":" << imsi << "}";
-          LogSimulationEvent("connection", data.str());
+          // Connection logging is handled by the visualization system
       }
   }
 
@@ -1477,12 +1450,12 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
     // Write the result to the resource file
     if (useSatellite) {
         resourceFile << i << " " << UETrafficProfileIndex[i] << " " << bestSatGNBIndex << "\n";
-        std::cout << ">>>UE " << i << " will attach to Satellite gNB " << bestSatGNBIndex 
-                  << " (RSSI: " << maxRSSI << " dBm)\n";
+        //std::cout << ">>>UE " << i << " will attach to Satellite gNB " << bestSatGNBIndex 
+                  //<< " (RSSI: " << maxRSSI << " dBm)\n";
     } else {
         resourceFile << i << " " << UETrafficProfileIndex[i] << " -1\n"; // -1 for satellite attachment
-        std::cout << ">>>UE " << i << " will attach to Terrestrial gNB " << bestTerGNBIndex 
-                  << " (RSSI: " << maxRSSI << " dBm)\n";
+        //std::cout << ">>>UE " << i << " will attach to Terrestrial gNB " << bestTerGNBIndex 
+                 // << " (RSSI: " << maxRSSI << " dBm)\n";
     }
 }
 
@@ -1559,9 +1532,6 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
     }
 }
 
-//prevResourceFile.close();
-//prevResAllFile.close();
-//resourceFile.close();
 std::cout << ">>>Resource allocation file updated successfully.\n";
 
 
@@ -1867,10 +1837,6 @@ performanceResultsFile << averageTerrestrialLinkThroughput << "\n";
   //rename(resAllFileName.str().c_str(), prevResAllFileName.str().c_str());
 
   Simulator::Destroy ();
-
-  // Close the event log file
-  eventLogFile << std::endl << "]" << std::endl;
-  eventLogFile.close();
 
   return 0;
 }

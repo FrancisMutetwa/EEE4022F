@@ -1,4 +1,4 @@
-Start round 0
+Start round 20
 Load Network configuration!
 NR parameters configured!
 Satellite gNB and UE net devices configured!
@@ -111,5 +111,5 @@ Simulation progress: 9.8 s - 98%
 Simulation progress: 9.9 s - 99%
 Simulation progress: 10 100%
 End Simulation
-It took: 0 min and 11 sec
+It took: 0 min and 53 sec
 
