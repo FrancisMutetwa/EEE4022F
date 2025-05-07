@@ -23,22 +23,18 @@ Tests                         : [32mON[0m
 
 
 Modules configured to be built:
-antenna                   aodv                      applications              
-bridge                    buildings                 config-store              
-core                      csma                      csma-layout               
-dsdv                      dsr                       energy                    
-fd-net-device             flow-monitor              internet                  
-internet-apps             lr-wpan                   lte                       
-mesh                      mobility                  netanim                   
-network                   nix-vector-routing        nr                        
-olsr                      point-to-point            point-to-point-layout     
-propagation               sixlowpan                 spectrum                  
-stats                     tap-bridge                test                      
-topology-read             traffic-control           uan                       
-virtual-net-device        wave                      wifi                      
-wimax                     
+antenna                   applications              bridge                    
+buildings                 config-store              core                      
+csma                      energy                    fd-net-device             
+flow-monitor              internet                  internet-apps             
+lr-wpan                   lte                       mobility                  
+netanim                   network                   nr                        
+point-to-point            point-to-point-layout     propagation               
+spectrum                  stats                     test                      
+traffic-control           uan                       virtual-net-device        
+wave                      wifi                      wimax                     
+
 
 Modules that cannot be built:
-brite                     click                     mpi                       
-openflow                  visualizer                
+mpi                       
 

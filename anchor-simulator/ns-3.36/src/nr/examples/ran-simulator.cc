@@ -75,6 +75,71 @@ private:
 
 std::ofstream PositionLogger::m_file;
 
+// Add these helper functions before the main RSSI calculation section
+
+double CalculatePathLoss(const std::string& environment, double distance, double frequency) {
+    double pathLoss = 0.0;
+    
+    // Distance is already in meters, no need to convert
+    double distanceM = distance;
+    
+    if (environment == "RMa_LoS") {
+        // Rural Macro Line of Sight path loss model
+        // Based on 3GPP TR 38.901
+        double h_BS = 35.0;  // Base station height in meters
+        double h_UT = 1.5;   // User terminal height in meters
+        double h = 5.0;      // Average building height in meters
+        double W = 20.0;     // Average street width in meters
+        
+        double d_BP = 2 * M_PI * h_BS * h_UT * frequency / (LIGHT_SPEED * 1000000);
+        
+        if (distanceM <= d_BP) {
+            pathLoss = 20 * log10(40 * M_PI * distanceM * frequency / (LIGHT_SPEED * 1000000)) + 
+                      min(0.03 * pow(h, 1.72), 10.0) * log10(distanceM) - 
+                      min(0.044 * pow(h, 1.72), 14.77) + 
+                      0.002 * log10(h) * distanceM;
+        } else {
+            pathLoss = 20 * log10(40 * M_PI * d_BP * frequency / (LIGHT_SPEED * 1000000)) + 
+                      40 * log10(distanceM / d_BP) + 
+                      min(0.03 * pow(h, 1.72), 10.0) * log10(distanceM) - 
+                      min(0.044 * pow(h, 1.72), 14.77) + 
+                      0.002 * log10(h) * distanceM;
+        }
+    }
+    else if (environment == "UMa_LoS") {
+        // Urban Macro Line of Sight path loss model
+        // Based on 3GPP TR 38.901
+        double h_BS = 25.0;  // Base station height in meters
+        double h_UT = 1.5;   // User terminal height in meters
+        
+        double d_BP = 4 * h_BS * h_UT * frequency / (LIGHT_SPEED * 1000000);
+        
+        if (distanceM <= d_BP) {
+            pathLoss = 28.0 + 22 * log10(distanceM) + 20 * log10(frequency / 1e9);
+        } else {
+            pathLoss = 28.0 + 40 * log10(distanceM) + 20 * log10(frequency / 1e9) - 
+                      9 * log10(pow(d_BP, 2) + pow(h_BS - h_UT, 2));
+        }
+    }
+    else if (environment == "UMi_StreetCanyon") {
+        // Urban Micro Street Canyon path loss model
+        // Based on 3GPP TR 38.901
+        double h_BS = 10.0;  // Base station height in meters
+        double h_UT = 1.5;   // User terminal height in meters
+        
+        double d_BP = 4 * h_BS * h_UT * frequency / (LIGHT_SPEED * 1000000);
+        
+        if (distanceM <= d_BP) {
+            pathLoss = 32.4 + 21 * log10(distanceM) + 20 * log10(frequency / 1e9);
+        } else {
+            pathLoss = 32.4 + 40 * log10(distanceM) + 20 * log10(frequency / 1e9) - 
+                      9.5 * log10(pow(d_BP, 2) + pow(h_BS - h_UT, 2));
+        }
+    }
+    
+    return pathLoss;
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -916,25 +981,6 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 cout << "UE-gNB attachments done!\n";
   logFile << "UE-gNB attachments done!\n";
   
@@ -1215,23 +1261,13 @@ for (uint32_t i = 0; i < terrestrialGnbContainer.GetN(); i++) {
     anim.UpdateNodeDescription(terrestrialGnbContainer.Get(i), "Terrestrial gNB " + std::to_string(i));
     anim.UpdateNodeColor(terrestrialGnbContainer.Get(i), 0, 255, 0); // Green for terrestrial gNBs
 }
-/** 
+
 for (uint32_t i = 0; i < ueGlobalContainer.GetN(); i++) {
     anim.UpdateNodeDescription(ueGlobalContainer.Get(i), "UE " + std::to_string(i));
     anim.UpdateNodeColor(ueGlobalContainer.Get(i), 0, 0, 255); // Blue for UEs
     
 }
-*/    
-
-for (uint32_t tpIndex = 0; tpIndex < numTrafficProfile; tpIndex++) {
-  for (uint32_t i = 0; i < ueNetDevContainers[tpIndex].GetN(); i++) {
-      Ptr<NetDevice> netDevice = ueNetDevContainers[tpIndex].Get(i);
-      Ptr<Node> node = netDevice->GetNode(); // Retrieve the associated Node
-      anim.UpdateNodeDescription(node, "UE " + std::to_string(i));
-      anim.UpdateNodeColor(node, 0, 0, 255); // Blue for UEs
-  }
-}
-
+ 
 
 // Label the PGW node
 anim.UpdateNodeDescription(pgw, "PGW");
@@ -1406,15 +1442,15 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
         if (activegNB[j]) {
             Vector gnbPosition = gNbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
             double distance = CalculateDistance(uePosition, gnbPosition);
-            
-            // Calculate FSPL
             double frequency = centralFrequenciesBands[0];
-            double fspl = 20 * log10(distance/1000) + 20 * log10(frequency) + 20 * log10(4 * M_PI / LIGHT_SPEED);
             
-            // Calculate RSSI
-            double Gt = 40; // Satellite gNB gain
-            double Gr = 0;  // UE gain
-            double rssi = txPower - fspl + Gt + Gr;
+            // Calculate path loss based on environment
+            double pathLoss = CalculatePathLoss(environment, distance, frequency);
+            
+            // Calculate RSSI for satellite
+            double Gt = 20; // Satellite gNB gain
+            double Gr = 1;  // UE gain
+            double rssi = txPower - pathLoss + Gt + Gr;
             
             if (rssi > maxRSSI) {
                 maxRSSI = rssi;
@@ -1429,15 +1465,15 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
         if (activeTerrestrialGNB[j]) {
             Vector gnbPosition = terrestrialGnbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
             double distance = CalculateDistance(uePosition, gnbPosition);
-            
-            // Calculate FSPL
             double frequency = centralFrequenciesBands[0];
-            double fspl = 20 * log10(distance/1000) + 20 * log10(frequency) + 20 * log10(4 * M_PI / LIGHT_SPEED);
             
-            // Calculate RSSI
-            double Gt = 18; // Terrestrial gNB gain
-            double Gr = 0;  // UE gain
-            double rssi = terrestrialTxPower - fspl + Gt + Gr;
+            // Calculate path loss based on environment
+            double pathLoss = CalculatePathLoss(environment, distance, frequency);
+            
+            // Calculate RSSI for terrestrial
+            double Gt = 8; // Terrestrial gNB gain
+            double Gr = 1;  // UE gain
+            double rssi = terrestrialTxPower - pathLoss + Gt + Gr;
             
             if (rssi > maxRSSI) {
                 maxRSSI = rssi;
@@ -1450,12 +1486,12 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
     // Write the result to the resource file
     if (useSatellite) {
         resourceFile << i << " " << UETrafficProfileIndex[i] << " " << bestSatGNBIndex << "\n";
-        //std::cout << ">>>UE " << i << " will attach to Satellite gNB " << bestSatGNBIndex 
-                  //<< " (RSSI: " << maxRSSI << " dBm)\n";
+        std::cout << ">>>UE " << i << " will attach to Satellite gNB " << bestSatGNBIndex 
+                  << " (RSSI: " << maxRSSI << " dBm)\n";
     } else {
         resourceFile << i << " " << UETrafficProfileIndex[i] << " -1\n"; // -1 for satellite attachment
-        //std::cout << ">>>UE " << i << " will attach to Terrestrial gNB " << bestTerGNBIndex 
-                 // << " (RSSI: " << maxRSSI << " dBm)\n";
+        std::cout << ">>>UE " << i << " will attach to Terrestrial gNB " << bestTerGNBIndex 
+                  << " (RSSI: " << maxRSSI << " dBm)\n";
     }
 }
 
@@ -1479,15 +1515,15 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
         if (activegNB[j]) {
             Vector gnbPosition = gNbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
             double distance = CalculateDistance(uePosition, gnbPosition);
-            
-            // Calculate FSPL
             double frequency = centralFrequenciesBands[0];
-            double fspl = 20 * log10(distance/1000) + 20 * log10(frequency) + 20 * log10(4 * M_PI / LIGHT_SPEED);
             
-            // Calculate RSSI
-            double Gt = 40; // Satellite gNB gain
-            double Gr = 0;  // UE gain
-            double rssi = txPower - fspl + Gt + Gr;
+            // Calculate path loss based on environment
+            double pathLoss = CalculatePathLoss(environment, distance, frequency);
+            
+            // Calculate RSSI for satellite
+            double Gt = 20; // Satellite gNB gain
+            double Gr = 1;  // UE gain
+            double rssi = txPower - pathLoss + Gt + Gr;
             
             if (rssi > maxRSSI) {
                 maxRSSI = rssi;
@@ -1502,15 +1538,15 @@ for (uint32_t i = 0; i < numTotalUE; i++) {
         if (activeTerrestrialGNB[j]) {
             Vector gnbPosition = terrestrialGnbContainer.Get(j)->GetObject<MobilityModel>()->GetPosition();
             double distance = CalculateDistance(uePosition, gnbPosition);
-            
-            // Calculate FSPL
             double frequency = centralFrequenciesBands[0];
-            double fspl = 20 * log10(distance/1000) + 20 * log10(frequency) + 20 * log10(4 * M_PI / LIGHT_SPEED);
             
-            // Calculate RSSI
-            double Gt = 18; // Terrestrial gNB gain
-            double Gr = 0;  // UE gain
-            double rssi = terrestrialTxPower - fspl + Gt + Gr;
+            // Calculate path loss based on environment
+            double pathLoss = CalculatePathLoss(environment, distance, frequency);
+            
+            // Calculate RSSI for terrestrial
+            double Gt = 8; // Terrestrial gNB gain
+            double Gr = 1;  // UE gain
+            double rssi = terrestrialTxPower - pathLoss + Gt + Gr;
             
             if (rssi > maxRSSI) {
                 maxRSSI = rssi;

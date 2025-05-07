@@ -1,3 +1,13 @@
+"""
+Name: Francis Mutetwa
+Date: 2025-05-07
+Student Number: MTTFRA005
+EEE4022F 2025 Final Year Project GUI submodule 
+
+This is the main GUI for the RAN Simulator.
+It allows the user to select an input trial directory, and then start the simulation.
+It also allows the user to select a round number, and then load the KPI data for that round.
+"""
 import sys
 import os
 import subprocess

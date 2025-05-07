@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import pandas as pd
 
 class NetworkVisualizer(QWidget):
@@ -29,8 +30,12 @@ class NetworkVisualizer(QWidget):
         # Create the canvas
         self.canvas = FigureCanvas(self.fig)
         
+        # Add navigation toolbar
+        self.toolbar = NavigationToolbar(self.canvas, self)
+        
         # Set up the layout
         layout = QVBoxLayout()
+        layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
         self.setLayout(layout)
         

@@ -5,7 +5,6 @@ cmake_policy(SET CMP0009 NEW)
 # single_source_file_scratches at scratch/CMakeLists.txt:65 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/*.cc")
 set(OLD_GLOB
-  "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/netanim-example.cc"
   "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/scratch-simulator.cc"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
@@ -27,7 +26,6 @@ endif()
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES true "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/**")
 set(OLD_GLOB
   "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/CMakeLists.txt"
-  "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/netanim-example.cc"
   "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/scratch-simulator.cc"
   "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/subdir"
   "/home/francis-mutetwa/Documents/Main FIle/trial1/anchor-simulator/ns-3.36/scratch/subdir/scratch-simulator-subdir.cc"
